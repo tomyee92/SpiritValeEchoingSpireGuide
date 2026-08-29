@@ -121,31 +121,23 @@
     f.bosses.push(b);
   });
 
+  // One line per boss, in climb order: F5 › boss › swap call.
+  // A floor with two bosses simply repeats its number, so every line stands alone.
   $("#list").innerHTML = floors.map(function (f) {
-    var n = f.bosses.length;
-    return '<section class="floor" id="floor-' + f.floor + '">' +
-      '<div class="floor-head">' +
-        '<p class="floor-no">Floor ' + f.floor + " <small>LV " + f.level + "</small></p>" +
-        '<p class="floor-meta">' + n + (n > 1 ? " bosses" : " boss") + "</p>" +
-      "</div>" +
-      '<div class="bosses">' + f.bosses.map(function (b) {
-        return '<button type="button" class="boss" data-def="' + b.def + '" data-i="' + b._i +
-            '" aria-describedby="tip">' +
-          '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
-          '<span class="b-name">' + esc(b.name) + "</span>" +
-          '<span class="b-spacer"></span>' +
-          '<span class="b-more">full card →</span>' +
-        "</button>";
-      }).join("") + "</div>" +
-      "</section>";
+    return f.bosses.map(function (b, j) {
+      return '<button type="button" class="boss' + (j === 0 ? " is-newfloor" : "") +
+          '" data-def="' + b.def + '" data-i="' + b._i + '"' +
+          (j === 0 ? ' id="floor-' + f.floor + '"' : "") + ' aria-describedby="tip">' +
+        '<span class="f-tag">F' + f.floor + "</span>" +
+        '<span class="b-name">' + esc(b.name) + "</span>" +
+        '<span class="b-lv">LV ' + b.level + "</span>" +
+        '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
+      "</button>";
+    }).join("");
   }).join("");
 
   /* meta blocks */
   $("#build").textContent = DATA.meta.gameBuild;
-  $("#rates").innerHTML = DATA.meta.currency.rates.map(function (r) {
-    return "<li><span>" + esc(r.range) + "</span><b>" + esc(r.amount) + "</b></li>";
-  }).join("");
-  $("#exchange").textContent = DATA.meta.currency.exchange;
   $("#src").href = DATA.meta.source;
 
   /* ---------- tooltip behaviour ---------- */

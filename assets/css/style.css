@@ -97,39 +97,6 @@ h1 {
   border-left: 2px solid var(--line); padding-left: 14px;
 }
 
-/* ---------- primer ---------- */
-
-.primer { padding: 36px 20px 4px; }
-
-.primer-grid {
-  display: grid; gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(228px, 1fr));
-}
-
-.card-note {
-  background: var(--panel); border: 1px solid var(--line-soft);
-  border-radius: var(--radius); padding: 17px 18px 15px; box-shadow: var(--shadow);
-}
-.card-note.danger { border-color: rgba(184,31,66,.3); background: linear-gradient(180deg, #fff6f7, var(--panel)); }
-
-.card-note h3 {
-  margin: 0 0 8px; font-size: 13px; letter-spacing: .04em;
-  text-transform: uppercase; color: var(--ink);
-}
-.card-note p { margin: 0 0 8px; font-size: 14.5px; color: var(--ink-2); }
-.card-note p:last-child { margin-bottom: 0; }
-.card-note strong { color: var(--ink); }
-
-.rates { list-style: none; margin: 6px 0 8px; padding: 0; display: grid; gap: 4px; }
-.rates li {
-  display: flex; justify-content: space-between; gap: 10px;
-  font: 500 13px/1.4 "IBM Plex Mono", monospace; color: var(--ink-2);
-  border-bottom: 1px dashed var(--line-soft); padding-bottom: 3px;
-}
-.rates b { color: var(--el-Earth); }
-
-.fine { font-size: 12.5px; color: var(--ink-3); }
-
 /* ---------- badges ---------- */
 
 .pill {
@@ -166,61 +133,45 @@ h1 {
   font: 400 12.5px/1.4 Inter, sans-serif;
 }
 
-/* ---------- floors ---------- */
+/* ---------- the climb: one line per boss ---------- */
 
-/* Rows sit in a narrow column so the hover card has clear space to its right. */
-.sheet { padding-block: 22px 64px; max-width: 560px; }
+.sheet { padding-block: 20px 64px; max-width: 560px; display: grid; gap: 4px; }
 
-.floor { margin-bottom: 30px; }
-
-.floor-head {
-  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-  padding-bottom: 7px; margin-bottom: 12px;
-  border-bottom: 2px solid var(--ink);
-}
-.floor-no {
-  margin: 0;
-  font: 400 38px/1 "Bebas Neue", sans-serif; letter-spacing: .03em; color: var(--ink);
-}
-.floor-no small { font-size: 16px; color: var(--ink-3); letter-spacing: .1em; }
-.floor-meta {
-  margin: 0; margin-left: auto;
-  font: 500 12px/1 "IBM Plex Mono", monospace; color: var(--ink-3);
-  letter-spacing: .08em; text-transform: uppercase;
-}
-
-.bosses { display: grid; gap: 9px; }
-
-/* the row itself — deliberately minimal */
 .boss {
   width: 100%; text-align: left; cursor: help;
-  display: flex; align-items: center; gap: 14px;
-  padding: 15px 18px; border-radius: var(--radius);
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; border-radius: 9px;
   background: var(--panel); border: 1px solid var(--line-soft);
   border-left: 4px solid var(--line);
-  box-shadow: var(--shadow);
   font: inherit; color: inherit;
-  transition: border-color .12s, transform .12s, box-shadow .12s;
+  transition: border-color .12s, background .12s, box-shadow .12s;
 }
 .boss[data-def="DEF"]   { border-left-color: var(--def); }
 .boss[data-def="MDEF"]  { border-left-color: var(--mdef); }
 .boss[data-def="SPLIT"] { border-left-color: var(--split); }
 
+/* first boss of a new floor gets a little air, so paired floors read together */
+.boss.is-newfloor { margin-top: 9px; }
+.boss.is-newfloor:first-child { margin-top: 0; }
+
 .boss:hover, .boss.is-active {
-  border-color: var(--ink-3);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(30,25,15,.06), 0 10px 24px rgba(30,25,15,.10);
+  border-color: var(--ink-3); background: var(--panel-2);
+  box-shadow: 0 2px 5px rgba(30,25,15,.07), 0 8px 20px rgba(30,25,15,.09);
 }
 .boss:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.b-name { font-size: 17px; font-weight: 600; margin: 0; }
-.b-spacer { flex: 1; }
-
-.b-more {
-  font: 400 12px/1 Inter, sans-serif; color: var(--ink-3);
-  opacity: 0; transition: opacity .12s;
+.f-tag {
+  flex: none; width: 46px;
+  font: 600 14px/1 "IBM Plex Mono", monospace; letter-spacing: .04em;
+  color: var(--ink); 
 }
-.boss:hover .b-more, .boss.is-active .b-more { opacity: 1; }
+.b-name { flex: 1; min-width: 0; font-size: 15.5px; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.b-lv {
+  flex: none; font: 400 11.5px/1 "IBM Plex Mono", monospace;
+  color: var(--ink-3); letter-spacing: .06em;
+}
+.boss .pill { flex: none; }
 
 /* ---------- tooltip ---------- */
 
@@ -312,7 +263,8 @@ h1 {
 @media (max-width: 640px) {
   .masthead { padding: 44px 0 30px; }
   .key .hint { margin-left: 0; width: 100%; }
-  .b-more { display: none; }
+  .b-lv { display: none; }   /* level is in the card; keep the line readable */
+  .f-tag { width: 40px; font-size: 13px; }
   .tip { width: calc(100vw - 24px); }
 }
 

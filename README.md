@@ -4,7 +4,9 @@ A fan-made, floor-by-floor guide to the Echoing Spire (Eternal Tower) in **Spiri
 all 20 boss floors from 5 to 101.
 
 The existing community guides present the data as one flat filterable table. This version is
-organized the way you actually climb: **one block per floor, in climb order**.
+organized the way you actually climb: **one line per boss, in climb order** — F5, then F10,
+then F15, straight down the tower. A floor with two bosses repeats its number so every line
+stands on its own.
 
 Rows are deliberately minimal — boss name plus the single call that matters mid-fight,
 **DEF or MDEF**. Everything else (element split, damage mix, every crowd control, DoTs,
@@ -29,7 +31,7 @@ Push to GitHub, then in **Settings → Pages** set the source to the `main` bran
 ## Layout
 
 ```
-index.html            markup + the static primer cards and legend
+index.html            markup + the legend line
 assets/css/style.css  all styling (light "paper" theme)
 assets/js/app.js      renders floors from the data + the hover tooltip
 data/bosses.js        the boss data (a plain script, not fetched JSON)
