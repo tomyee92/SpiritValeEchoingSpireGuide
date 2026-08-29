@@ -30,7 +30,7 @@ Push to GitHub, then in **Settings → Pages** set the source to the `main` bran
 
 ```
 index.html            markup + the static primer cards and legend
-assets/css/style.css  all styling (dark, single theme)
+assets/css/style.css  all styling (light "paper" theme)
 assets/js/app.js      renders floors from the data + the hover tooltip
 data/bosses.js        the boss data (a plain script, not fetched JSON)
 ```
