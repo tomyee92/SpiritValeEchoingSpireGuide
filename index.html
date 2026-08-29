@@ -7,7 +7,7 @@
 <meta name="description" content="A clear floor-by-floor climb sheet for Spirit Vale's Echoing Spire: what to wear, what to resist, and what will lock you out on every boss floor from 5 to 101.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -19,9 +19,9 @@
     <p class="eyebrow">Spirit Vale · Endgame</p>
     <h1>The Echoing Spire</h1>
     <p class="lede">
-      A floor-by-floor climb sheet for all 20 boss floors, 5 through 101.
-      For each one: <strong>what armor to wear</strong>, <strong>what element to resist</strong>,
-      and <strong>what will lock you out of the fight</strong>.
+      Every boss floor of the 101-floor climb, in the order you meet them.
+      Each row tells you the one thing that matters while you fight —
+      <strong>DEF or MDEF</strong>. Point at a boss for the rest.
     </p>
     <p class="disclaimer">
       Damage figures are modeled estimates of <em>composition</em> — what share of a boss's output is
@@ -42,13 +42,13 @@
     <article class="card-note">
       <h3>MDEF wins the climb</h3>
       <p>Most Spire bosses deal chiefly Magic damage, so <strong>MDEF is your default kit</strong>.
-      Swap to DEF only on the physical floors — they are marked
+      Swap to DEF only on the floors marked
       <span class="pill pill-def">DEF</span> below.</p>
     </article>
     <article class="card-note danger">
       <h3>Curse is the priest trap</h3>
-      <p>Under Curse, <strong>your heals damage you</strong>. Check the Curse floors before you climb —
-      filter for them with the <em>Curse</em> chip.</p>
+      <p>Under Curse, <strong>your heals damage you</strong>. It shows as a
+      <span class="cc cc-curse">Curse</span> flag in a boss's tooltip — check before you commit a healer.</p>
     </article>
     <article class="card-note">
       <h3>Umbral Fragment</h3>
@@ -59,61 +59,17 @@
   </div>
 </section>
 
-<section class="wrap threats" aria-labelledby="threats-h">
-  <h2 id="threats-h">Know before you climb</h2>
-  <div class="threat-grid">
-    <article class="threat" data-threat="Silence">
-      <h3><span class="cc cc-silence">Silence</span> Priests can't heal</h3>
-      <p>Up to 5s at 100%. Pre-buff, carry Silence resist, or burst them down.</p>
-      <p class="floorlist" data-floors-for="Silence"></p>
-    </article>
-    <article class="threat" data-threat="Freeze">
-      <h3><span class="cc cc-freeze">Freeze</span> 10 seconds of nothing</h3>
-      <p>Frozen means <em>cannot act</em>. Freeze immunity is near-mandatory on these.</p>
-      <p class="floorlist" data-floors-for="Freeze"></p>
-    </article>
-    <article class="threat" data-threat="Stun">
-      <h3><span class="cc cc-stun">Stun</span> Short but constant</h3>
-      <p>Mostly 3s, often at 100% per landed cast, and often stacked several to a boss.</p>
-      <p class="floorlist" data-floors-for="Stun"></p>
-    </article>
-    <article class="threat" data-threat="Curse">
-      <h3><span class="cc cc-curse">Curse</span> Heals turn on you</h3>
-      <p>The single most run-ending debuff for a healer-led party.</p>
-      <p class="floorlist" data-floors-for="Curse"></p>
-    </article>
-  </div>
-</section>
-
-<div class="toolbar" id="toolbar">
-  <div class="wrap toolbar-inner">
-    <label class="search">
-      <span class="sr-only">Search bosses or floors</span>
-      <input type="search" id="search" placeholder="Search a boss or floor…" autocomplete="off">
-    </label>
-    <div class="chips" role="group" aria-label="Filter floors">
-      <button class="chip is-on" data-filter="all">All</button>
-      <button class="chip" data-filter="DEF">Phys · DEF</button>
-      <button class="chip" data-filter="MDEF">Magic · MDEF</button>
-      <button class="chip" data-filter="Silence">Silence</button>
-      <button class="chip" data-filter="Freeze">Freeze</button>
-      <button class="chip" data-filter="Stun">Stun</button>
-      <button class="chip" data-filter="Curse">Curse</button>
-    </div>
-    <button class="expand-all" id="expandAll" aria-pressed="false">Expand all</button>
-  </div>
+<div class="wrap keyline">
+  <p class="key">
+    <span class="pill pill-def">DEF</span> physical floor
+    <span class="pill pill-mdef">MDEF</span> magic floor
+    <span class="pill pill-split">SPLIT</span> mixed — no clean answer
+    <em class="hint">Hover a boss for its full combat card · tap on mobile</em>
+  </p>
 </div>
 
-<main class="wrap layout" id="floors">
-  <nav class="rail" aria-label="Jump to floor">
-    <p class="rail-h">Floors</p>
-    <ul id="rail"></ul>
-  </nav>
-
-  <div class="sheet">
-    <p class="empty" id="empty" hidden>No floors match that filter.</p>
-    <div id="list"></div>
-  </div>
+<main class="wrap" id="floors">
+  <div id="list" class="sheet"></div>
 </main>
 
 <footer class="site-foot">
@@ -124,6 +80,8 @@
       reorganized here as a climb sheet. Corrections welcome.</p>
   </div>
 </footer>
+
+<div id="tip" class="tip" role="tooltip" aria-hidden="true"></div>
 
 <script src="data/bosses.js"></script>
 <script src="assets/js/app.js"></script>

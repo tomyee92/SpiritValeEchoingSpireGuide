@@ -1,4 +1,6 @@
-/* Echoing Spire climb sheet — renders window.SPIRE_DATA into floor blocks. */
+/* Echoing Spire climb sheet.
+ * Rows carry only name + armor call; the full combat card is a hover tooltip
+ * (tap on touch, focus for keyboard). */
 (function () {
   "use strict";
 
@@ -15,37 +17,11 @@
     });
   };
 
-  var slug = function (s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-"); };
+  /* ---------- tooltip content ---------- */
 
-  /* ---------- derived helpers ---------- */
-
-  // Worst CC on a boss, for the at-a-glance threat row: longest lockout first.
   var CC_RANK = { Freeze: 4, Silence: 3, Stun: 2 };
 
-  function ccSummary(b) {
-    var byType = {};
-    b.cc.forEach(function (c) {
-      var t = c[0];
-      if (!byType[t] || c[2] > byType[t][2]) byType[t] = c;
-    });
-    return Object.keys(byType)
-      .sort(function (a, c) { return (CC_RANK[c] || 0) - (CC_RANK[a] || 0); })
-      .map(function (t) { return byType[t]; });
-  }
-
   function hasCurse(b) { return b.deb.indexOf("Curse") !== -1; }
-
-  function matchesFilter(b, f) {
-    if (f === "all") return true;
-    if (f === "DEF") return b.def === "DEF";
-    if (f === "MDEF") return b.def === "MDEF";
-    if (f === "Curse") return hasCurse(b);
-    return b.cc.some(function (c) { return c[0] === f; });
-  }
-
-  function floorId(f) { return "floor-" + f; }
-
-  /* ---------- fragments ---------- */
 
   function elementBar(b) {
     var bar = b.elements.map(function (e) {
@@ -54,7 +30,7 @@
     var legend = b.elements.map(function (e) {
       return '<i style="--sw:var(--el-' + e[0] + ',var(--ink-3))">' + esc(e[0]) + " " + e[1] + "</i>";
     }).join("");
-    return '<div class="b-el"><p class="meter-label">Element</p><div class="bar">' + bar +
+    return '<div class="tip-sec"><h4>Element</h4><div class="bar">' + bar +
       '</div><div class="legend">' + legend + "</div></div>";
   }
 
@@ -67,7 +43,7 @@
 
     var bar = parts.map(function (p) {
       return '<span style="width:' + p[1] + "%;background:" + p[2] +
-        (p[0] === "Ran" ? ";opacity:.62" : "") + '"></span>';
+        (p[0] === "Ran" ? ";opacity:.6" : "") + '"></span>';
     }).join("");
     var legend = parts.map(function (p) {
       return '<i style="--sw:' + p[2] + '">' + p[0] + " " + p[1] + "</i>";
@@ -76,107 +52,92 @@
     var phys = b.mix.mel + b.mix.ran;
     var call = phys > b.mix.mag ? phys + "% blocked by DEF" : b.mix.mag + "% blocked by MDEF";
 
-    return '<div class="b-mix"><p class="meter-label">' + call +
-      '</p><div class="bar">' + bar + '</div><div class="legend">' + legend + "</div></div>";
+    return '<div class="tip-sec"><h4>Damage type · ' + call + '</h4><div class="bar">' + bar +
+      '</div><div class="legend">' + legend + "</div></div>";
   }
 
-  function threatRow(b) {
-    var out = ccSummary(b).map(function (c) {
-      return '<span class="cc cc-' + c[0].toLowerCase() + '">' + esc(c[0]) + " " + esc(c[1]) + " · " + c[2] + "%</span>";
+  function threatSec(b) {
+    var byType = {};
+    b.cc.forEach(function (c) {
+      var t = c[0];
+      if (!byType[t] || c[2] > byType[t][2]) byType[t] = c;
     });
+    var out = Object.keys(byType)
+      .sort(function (a, c) { return (CC_RANK[c] || 0) - (CC_RANK[a] || 0); })
+      .map(function (t) {
+        var c = byType[t];
+        return '<span class="cc cc-' + t.toLowerCase() + '">' + esc(t) + " " + esc(c[1]) + " · " + c[2] + "%</span>";
+      });
     if (hasCurse(b)) out.push('<span class="cc cc-curse">Curse</span>');
-    if (!out.length) out.push('<span class="none">no hard CC, no Curse</span>');
-    return '<div class="b-threat"><p class="meter-label" style="width:100%">Watch out for</p>' + out.join("") + "</div>";
+    if (!out.length) return '<div class="tip-sec"><h4>Watch out for</h4><ul><li>No hard CC, no Curse.</li></ul></div>';
+    return '<div class="tip-sec"><h4>Watch out for</h4><div class="tags">' + out.join("") + "</div></div>";
   }
 
-  function listBlock(title, items, curseAware) {
+  function ccList(b) {
+    if (!b.cc.length) return "";
+    return '<div class="tip-sec"><h4>Every crowd control</h4><ul>' + b.cc.map(function (c) {
+      return "<li>" + esc(c[0]) + " — " + esc(c[1]) + " at " + c[2] + "% per landed cast</li>";
+    }).join("") + "</ul></div>";
+  }
+
+  function tagSec(title, items, curseAware) {
     if (!items.length) return "";
     var body = items.map(function (t) {
       var label = Array.isArray(t) ? t[0] + " · " + t[1] : t;
-      var cls = curseAware && t === "Curse" ? ' class="tag is-curse"' : ' class="tag"';
-      return "<span" + cls + ">" + esc(label) + "</span>";
+      var cls = curseAware && t === "Curse" ? "tag is-curse" : "tag";
+      return '<span class="' + cls + '">' + esc(label) + "</span>";
     }).join("");
-    return '<div class="dblock"><h4>' + esc(title) + "</h4><div>" + body + "</div></div>";
+    return '<div class="tip-sec"><h4>' + esc(title) + '</h4><div class="tags">' + body + "</div></div>";
   }
 
-  function detail(b) {
-    var ccBlock = b.cc.length
-      ? '<div class="dblock"><h4>Crowd control</h4><ul>' + b.cc.map(function (c) {
-          return "<li>" + esc(c[0]) + " — " + esc(c[1]) + " at " + c[2] + "% per landed cast</li>";
-        }).join("") + "</ul></div>"
-      : '<div class="dblock"><h4>Crowd control</h4><ul><li>None.</li></ul></div>';
-
-    var pace = '<div class="dblock"><h4>Attack pattern</h4><ul>' +
+  function tipHTML(b) {
+    var pace = '<div class="tip-sec"><h4>Attack pattern</h4><ul>' +
       "<li>" + b.autoPct + "% of output is auto-attack</li>" +
-      "<li>~" + b.swings + " swings per 60s</li>" +
-      "<li>Level " + b.level + "</li></ul></div>";
+      "<li>~" + b.swings + " swings per 60s</li></ul></div>";
 
     var notes = b.notes
       ? '<div class="notes-slot" style="border-style:solid;color:var(--ink-2)">' + esc(b.notes) + "</div>"
-      : '<div class="notes-slot">No strategy notes yet — this is where our own tactics, positioning and gear calls go.</div>';
+      : '<div class="notes-slot">No strategy notes yet.</div>';
 
-    var elBlock = '<div class="dblock">' + elementBar(b) + "</div>";
-
-    return '<div class="boss-detail">' +
-      '<div class="detail-grid">' + elBlock + ccBlock + listBlock("DoTs", b.dot) +
-        listBlock("Debuffs", b.deb, true) + pace +
+    return '<div class="tip-head">' +
+        "<h3>" + esc(b.name) + "</h3>" +
+        '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
+        '<span class="lv">F' + b.floor + " · LV " + b.level + "</span>" +
       "</div>" +
-      '<p class="prepare">Prepare: ' + esc(b.prepare) +
+      threatSec(b) + mixBar(b) + elementBar(b) + ccList(b) +
+      tagSec("DoTs", b.dot) + tagSec("Debuffs", b.deb, true) + pace +
+      '<div class="tip-sec"><p class="prepare">Prepare: ' + esc(b.prepare) +
         (b.multi ? "<em>* Element spread is too wide to fully resist — lean on raw mitigation instead of chasing a resist set.</em>" : "") +
-      "</p>" + notes +
-      "</div>";
+      "</p>" + notes + "</div>";
   }
 
-  function bossCard(b) {
-    var pillCls = "pill pill-" + b.def.toLowerCase();
-    var resist = b.elements[0][0];
-    return '<article class="boss" data-def="' + b.def + '" data-name="' + esc(b.name.toLowerCase()) + '">' +
-      '<button class="boss-top" type="button" aria-expanded="false">' +
-        '<div class="b-name">' +
-          "<h3>" + esc(b.name) + "</h3>" +
-          '<div class="b-swap"><span class="' + pillCls + '">' + b.def + "</span>" +
-            '<span class="b-sub">resist ' + esc(resist) + (b.multi ? " *" : "") + "</span></div>" +
-        "</div>" +
-        mixBar(b) + threatRow(b) +
-        '<span class="caret" aria-hidden="true">▾</span>' +
-      "</button>" +
-      detail(b) +
-      "</article>";
-  }
-
-  /* ---------- render ---------- */
+  /* ---------- render rows ---------- */
 
   var floors = [];
-  BOSSES.forEach(function (b) {
+  BOSSES.forEach(function (b, i) {
+    b._i = i;
     var f = floors[floors.length - 1];
     if (!f || f.floor !== b.floor) { f = { floor: b.floor, level: b.level, bosses: [] }; floors.push(f); }
     f.bosses.push(b);
   });
 
-  var listEl = $("#list");
-  var railEl = $("#rail");
-
-  function railDot(fb) {
-    var defs = fb.map(function (b) { return b.def; });
-    if (defs.every(function (d) { return d === "MDEF"; })) return "var(--mdef)";
-    if (defs.every(function (d) { return d === "DEF"; })) return "var(--def)";
-    return "var(--split)";
-  }
-
-  listEl.innerHTML = floors.map(function (f) {
-    var count = f.bosses.length;
-    return '<section class="floor" id="' + floorId(f.floor) + '" data-floor="' + f.floor + '">' +
+  $("#list").innerHTML = floors.map(function (f) {
+    var n = f.bosses.length;
+    return '<section class="floor" id="floor-' + f.floor + '">' +
       '<div class="floor-head">' +
         '<p class="floor-no">Floor ' + f.floor + " <small>LV " + f.level + "</small></p>" +
-        '<p class="floor-meta">' + count + (count > 1 ? " bosses" : " boss") + "</p>" +
+        '<p class="floor-meta">' + n + (n > 1 ? " bosses" : " boss") + "</p>" +
       "</div>" +
-      '<div class="bosses">' + f.bosses.map(bossCard).join("") + "</div>" +
+      '<div class="bosses">' + f.bosses.map(function (b) {
+        return '<button type="button" class="boss" data-def="' + b.def + '" data-i="' + b._i +
+            '" aria-describedby="tip">' +
+          '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
+          '<span class="b-name">' + esc(b.name) + "</span>" +
+          '<span class="b-spacer"></span>' +
+          '<span class="b-more">full card →</span>' +
+        "</button>";
+      }).join("") + "</div>" +
       "</section>";
-  }).join("");
-
-  railEl.innerHTML = floors.map(function (f) {
-    return '<li><a href="#' + floorId(f.floor) + '" data-floor="' + f.floor + '">' + f.floor +
-      '<span class="dot" style="background:' + railDot(f.bosses) + '"></span></a></li>';
   }).join("");
 
   /* meta blocks */
@@ -187,83 +148,106 @@
   $("#exchange").textContent = DATA.meta.currency.exchange;
   $("#src").href = DATA.meta.source;
 
-  /* threat floor lists */
-  $$("[data-floors-for]").forEach(function (el) {
-    var kind = el.getAttribute("data-floors-for");
-    var hits = [];
-    BOSSES.forEach(function (b) {
-      var hit = kind === "Curse" ? hasCurse(b) : b.cc.some(function (c) { return c[0] === kind; });
-      if (hit && hits.indexOf(b.floor) === -1) hits.push(b.floor);
-    });
-    el.innerHTML = hits.length
-      ? hits.map(function (f) { return '<a href="#' + floorId(f) + '">F' + f + "</a>"; }).join("")
-      : "<span>None.</span>";
-  });
+  /* ---------- tooltip behaviour ---------- */
 
-  /* ---------- interaction ---------- */
+  var tip = $("#tip");
+  var current = null;
+  var GAP = 12;
+  var hideTimer = null;
 
-  listEl.addEventListener("click", function (e) {
-    var btn = e.target.closest(".boss-top");
-    if (!btn) return;
-    var card = btn.parentNode;
-    var open = card.classList.toggle("is-open");
-    btn.setAttribute("aria-expanded", String(open));
-  });
+  function cancelHide() { clearTimeout(hideTimer); hideTimer = null; }
+  function scheduleHide() { cancelHide(); hideTimer = setTimeout(hide, 130); }
 
-  var state = { filter: "all", q: "" };
+  function place(anchorRect) {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var r = tip.getBoundingClientRect();
+    var w = r.width, h = r.height;
 
-  function apply() {
-    var q = state.q.trim().toLowerCase();
-    var anyFloor = false;
+    // Prefer the right of the row; fall back to the left; then clamp inside.
+    var x = anchorRect.right + GAP;
+    if (x + w > vw - 10) x = anchorRect.left - GAP - w;
+    if (x < 10) x = Math.max(10, Math.min(vw - w - 10, anchorRect.left));
 
-    $$(".floor").forEach(function (sec) {
-      var floorNo = sec.getAttribute("data-floor");
-      var shown = 0;
+    // Vertically centre on the row, clamped to the viewport.
+    var y = anchorRect.top + anchorRect.height / 2 - h / 2;
+    y = Math.max(10, Math.min(vh - h - 10, y));
 
-      $$(".boss", sec).forEach(function (card) {
-        var b = BOSSES.filter(function (x) {
-          return x.name.toLowerCase() === card.getAttribute("data-name");
-        })[0];
-        var ok = matchesFilter(b, state.filter) &&
-          (!q || b.name.toLowerCase().indexOf(q) !== -1 || floorNo.indexOf(q) !== -1);
-        card.hidden = !ok;
-        if (ok) shown++;
-      });
-
-      sec.hidden = shown === 0;
-      if (shown) anyFloor = true;
-
-      var rl = railEl.querySelector('a[data-floor="' + floorNo + '"]');
-      if (rl) rl.parentNode.hidden = shown === 0;
-    });
-
-    $("#empty").hidden = anyFloor;
+    tip.style.left = Math.round(x) + "px";
+    tip.style.top = Math.round(y) + "px";
   }
 
-  $$(".chip").forEach(function (chip) {
-    chip.addEventListener("click", function () {
-      $$(".chip").forEach(function (c) { c.classList.remove("is-on"); });
-      chip.classList.add("is-on");
-      state.filter = chip.getAttribute("data-filter");
-      apply();
-    });
+  function show(btn) {
+    cancelHide();
+    if (current === btn) return;
+    hide();
+    current = btn;
+    tip.innerHTML = tipHTML(BOSSES[+btn.dataset.i]);
+    tip.classList.add("is-on");
+    tip.setAttribute("aria-hidden", "false");
+    btn.classList.add("is-active");
+    place(btn.getBoundingClientRect());
+  }
+
+  function hide() {
+    cancelHide();
+    if (current) current.classList.remove("is-active");
+    tip.scrollTop = 0;
+    current = null;
+    tip.classList.remove("is-on");
+    tip.setAttribute("aria-hidden", "true");
+  }
+
+  var list = $("#list");
+
+  list.addEventListener("mouseover", function (e) {
+    var btn = e.target.closest(".boss");
+    if (btn) show(btn);
   });
 
-  $("#search").addEventListener("input", function (e) {
-    state.q = e.target.value;
-    apply();
+  // Leaving a row closes the card — unless the cursor is heading into the card
+  // itself, so tall ones stay readable and scrollable.
+  list.addEventListener("mouseout", function (e) {
+    var btn = e.target.closest(".boss");
+    if (!btn || btn.contains(e.relatedTarget)) return;
+    if (e.relatedTarget && tip.contains(e.relatedTarget)) return;
+    scheduleHide();
   });
 
-  var expandBtn = $("#expandAll");
-  expandBtn.addEventListener("click", function () {
-    var open = expandBtn.getAttribute("aria-pressed") !== "true";
-    expandBtn.setAttribute("aria-pressed", String(open));
-    expandBtn.textContent = open ? "Collapse all" : "Expand all";
-    $$(".boss").forEach(function (card) {
-      card.classList.toggle("is-open", open);
-      $(".boss-top", card).setAttribute("aria-expanded", String(open));
-    });
+  tip.addEventListener("mouseenter", cancelHide);
+  tip.addEventListener("mouseleave", scheduleHide);
+
+  // Keyboard: focus opens, blur closes.
+  list.addEventListener("focusin", function (e) {
+    var btn = e.target.closest(".boss");
+    if (btn) show(btn);
+  });
+  list.addEventListener("focusout", function (e) {
+    var btn = e.target.closest(".boss");
+    if (btn) hide();
   });
 
-  apply();
+  // Touch / click: toggle, since there is no hover.
+  list.addEventListener("click", function (e) {
+    var btn = e.target.closest(".boss");
+    if (!btn) return;
+    e.preventDefault();
+    if (current === btn) hide(); else show(btn);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") hide();
+  });
+
+  // Dismiss on outside tap (touch devices).
+  document.addEventListener("click", function (e) {
+    if (current && !e.target.closest(".boss") && !tip.contains(e.target)) hide();
+  });
+
+  window.addEventListener("scroll", function () {
+    if (current) place(current.getBoundingClientRect());
+  }, { passive: true });
+
+  window.addEventListener("resize", function () {
+    if (current) place(current.getBoundingClientRect());
+  });
 })();

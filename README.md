@@ -4,14 +4,14 @@ A fan-made, floor-by-floor guide to the Echoing Spire (Eternal Tower) in **Spiri
 all 20 boss floors from 5 to 101.
 
 The existing community guides present the data as one flat filterable table. This version is
-organized the way you actually climb: **one block per floor, in climb order**, and each boss
-answers three questions at a glance —
+organized the way you actually climb: **one block per floor, in climb order**.
 
-1. **What armor do I wear?** (DEF / MDEF / Split)
-2. **What element do I resist?**
-3. **What is going to lock me out of the fight?** (Freeze / Silence / Stun / Curse)
+Rows are deliberately minimal — boss name plus the single call that matters mid-fight,
+**DEF or MDEF**. Everything else (element split, damage mix, every crowd control, DoTs,
+debuffs, attack pacing, the gear call) appears in a **hover tooltip**: point at a boss to
+get its full combat card. Tap on touch devices; keyboard focus works too.
 
-Everything else — full CC list, DoTs, debuffs, attack pacing — lives in the expandable detail.
+There is no search and no filtering by design — you scroll the tower the way you climb it.
 
 ## Running it
 
@@ -29,9 +29,9 @@ Push to GitHub, then in **Settings → Pages** set the source to the `main` bran
 ## Layout
 
 ```
-index.html            markup + the static primer/threat sections
+index.html            markup + the static primer cards and legend
 assets/css/style.css  all styling (dark, single theme)
-assets/js/app.js      renders floors from the data, filtering, search, expand
+assets/js/app.js      renders floors from the data + the hover tooltip
 data/bosses.js        the boss data (a plain script, not fetched JSON)
 ```
 
@@ -56,8 +56,8 @@ Each boss entry:
 | `prepare` | the one-line gear call |
 | `notes`, `drops`, `links` | **ours to fill in** — currently empty everywhere |
 
-Adding a boss is just another object in the array; floors group themselves and the sidebar,
-filters and threat lists all derive from the data automatically.
+Adding a boss is just another object in the array; floors group themselves and the tooltip
+content derives from the data automatically.
 
 ### Still to add
 
