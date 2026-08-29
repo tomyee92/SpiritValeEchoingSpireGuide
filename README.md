@@ -56,10 +56,19 @@ Each boss entry:
 | `dot` | `[type, duration]` |
 | `deb` | debuff names |
 | `prepare` | the one-line gear call |
+| `icon` | path to a self-hosted boss icon, or `null` when none exists (see below) |
 | `notes`, `drops`, `links` | **ours to fill in** — currently empty everywhere |
 
 Adding a boss is just another object in the array; floors group themselves and the tooltip
 content derives from the data automatically.
+
+## Boss icons
+
+`assets/img/bosses/*.webp` — 26 monster icons pulled from the SpiritValers guide and
+self-hosted here (not hotlinked), one per boss. The 8 floor-101 "Echo … Master" bosses have
+**no icon anywhere** — their `<img>` tags 404 on the source site itself (confirmed:
+`complete: false` there too), not something broken on our end. Those render a plain
+two-letter monogram instead, generated from the boss name at render time.
 
 ### Still to add
 

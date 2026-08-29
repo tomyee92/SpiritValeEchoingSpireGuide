@@ -23,6 +23,18 @@
 
   function hasCurse(b) { return b.deb.indexOf("Curse") !== -1; }
 
+  // Some Echo Masters (floor 101) have no icon on the source site either -
+  // its own <img> tags for them 404. Fall back to a plain monogram so layout
+  // stays aligned instead of guessing at an image that doesn't exist.
+  function iconHTML(b, cls) {
+    if (b.icon) {
+      return '<img class="' + cls + '" src="' + esc(b.icon) + '" alt="" width="40" height="40" loading="lazy">';
+    }
+    var initials = b.name.split(" ").filter(function (w) { return w[0] === w[0].toUpperCase(); })
+      .map(function (w) { return w[0]; }).join("").slice(0, 2);
+    return '<span class="' + cls + ' icon-fallback" aria-hidden="true">' + esc(initials) + "</span>";
+  }
+
   function elementBar(b) {
     var bar = b.elements.map(function (e) {
       return '<span style="width:' + e[1] + '%;background:var(--el-' + e[0] + ',var(--ink-3))"></span>';
@@ -100,9 +112,10 @@
       : '<div class="notes-slot">No strategy notes yet.</div>';
 
     return '<div class="tip-head">' +
-        "<h3>" + esc(b.name) + "</h3>" +
+        iconHTML(b, "tip-icon") +
+        '<div class="tip-title"><h3>' + esc(b.name) + "</h3>" +
         '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
-        '<span class="lv">F' + b.floor + " · LV " + b.level + "</span>" +
+        '<span class="lv">F' + b.floor + " · LV " + b.level + "</span></div>" +
       "</div>" +
       threatSec(b) + mixBar(b) + elementBar(b) + ccList(b) +
       tagSec("DoTs", b.dot) + tagSec("Debuffs", b.deb, true) + pace +
@@ -129,6 +142,7 @@
           '" data-def="' + b.def + '" data-i="' + b._i + '"' +
           (j === 0 ? ' id="floor-' + f.floor + '"' : "") + ' aria-describedby="tip">' +
         '<span class="f-tag">F' + f.floor + "</span>" +
+        iconHTML(b, "row-icon") +
         '<span class="b-name">' + esc(b.name) + "</span>" +
         '<span class="b-lv">LV ' + b.level + "</span>" +
         '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
@@ -191,24 +205,46 @@
 
   var list = $("#list");
 
-  list.addEventListener("mouseover", function (e) {
-    var btn = e.target.closest(".boss");
-    if (btn) show(btn);
-  });
+  // Touch browsers fire a synthetic mouseover right before click on first tap.
+  // If both hover and click-toggle are wired unconditionally, that mouseover
+  // opens the card and the very same tap's click then toggles it straight shut
+  // - the card flashes and the boss details look like they never appeared.
+  // Fix: pick ONE input mode. Real hover (mouse/trackpad) gets hover behaviour;
+  // everything else (touch, or a browser that can't tell) gets tap-to-toggle.
+  var supportsHover = !window.matchMedia || matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-  // Leaving a row closes the card — unless the cursor is heading into the card
-  // itself, so tall ones stay readable and scrollable.
-  list.addEventListener("mouseout", function (e) {
-    var btn = e.target.closest(".boss");
-    if (!btn || btn.contains(e.relatedTarget)) return;
-    if (e.relatedTarget && tip.contains(e.relatedTarget)) return;
-    scheduleHide();
-  });
+  if (supportsHover) {
+    list.addEventListener("mouseover", function (e) {
+      var btn = e.target.closest(".boss");
+      if (btn) show(btn);
+    });
 
-  tip.addEventListener("mouseenter", cancelHide);
-  tip.addEventListener("mouseleave", scheduleHide);
+    // Leaving a row closes the card — unless the cursor is heading into the
+    // card itself, so tall ones stay readable and scrollable.
+    list.addEventListener("mouseout", function (e) {
+      var btn = e.target.closest(".boss");
+      if (!btn || btn.contains(e.relatedTarget)) return;
+      if (e.relatedTarget && tip.contains(e.relatedTarget)) return;
+      scheduleHide();
+    });
 
-  // Keyboard: focus opens, blur closes.
+    tip.addEventListener("mouseenter", cancelHide);
+    tip.addEventListener("mouseleave", scheduleHide);
+  } else {
+    // Touch: tap a row to open, tap it again (or elsewhere) to close.
+    list.addEventListener("click", function (e) {
+      var btn = e.target.closest(".boss");
+      if (!btn) return;
+      e.preventDefault();
+      if (current === btn) hide(); else show(btn);
+    });
+
+    document.addEventListener("click", function (e) {
+      if (current && !e.target.closest(".boss") && !tip.contains(e.target)) hide();
+    });
+  }
+
+  // Keyboard focus always opens/closes the card, regardless of pointer type.
   list.addEventListener("focusin", function (e) {
     var btn = e.target.closest(".boss");
     if (btn) show(btn);
@@ -218,21 +254,8 @@
     if (btn) hide();
   });
 
-  // Touch / click: toggle, since there is no hover.
-  list.addEventListener("click", function (e) {
-    var btn = e.target.closest(".boss");
-    if (!btn) return;
-    e.preventDefault();
-    if (current === btn) hide(); else show(btn);
-  });
-
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") hide();
-  });
-
-  // Dismiss on outside tap (touch devices).
-  document.addEventListener("click", function (e) {
-    if (current && !e.target.closest(".boss") && !tip.contains(e.target)) hide();
   });
 
   window.addEventListener("scroll", function () {
