@@ -8,10 +8,15 @@ organized the way you actually climb: **one line per boss, in climb order** — 
 then F15, straight down the tower. A floor with two bosses repeats its number so every line
 stands on its own.
 
-Rows are deliberately minimal — boss name plus the single call that matters mid-fight,
-**DEF or MDEF**. Everything else (element split, damage mix, every crowd control, DoTs,
-debuffs, attack pacing, the gear call) appears in a **hover tooltip**: point at a boss to
-get its full combat card. Tap on touch devices; keyboard focus works too.
+Each boss block has two independent hover/tap targets:
+
+- **Icon + name + level + DEF/MDEF pill** — point at this for the full combat card
+  (damage-type split, element resist, attack pacing, the gear-prep line).
+- **Every status tag** (Silence, Freeze, Stun, Curse, every debuff and DoT) is
+  **always visible on the row, never hidden** — point at any one tag for a small
+  tooltip with its exact duration/chance and what it does to you.
+
+Tap does the same on touch; keyboard focus works on both target types too.
 
 There is no search and no filtering by design — you scroll the tower the way you climb it.
 

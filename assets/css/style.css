@@ -133,57 +133,83 @@ h1 {
   font: 400 12.5px/1.4 Inter, sans-serif;
 }
 
-/* ---------- the climb: one line per boss ---------- */
+/* ---------- the climb: one block per boss ---------- */
 
-.sheet { padding-block: 20px 64px; max-width: 560px; display: grid; gap: 4px; }
+.sheet { padding-block: 22px 64px; max-width: 640px; display: grid; gap: 8px; }
 
 .boss {
-  width: 100%; text-align: left; cursor: help;
-  display: flex; align-items: center; gap: 12px;
-  padding: 11px 14px; border-radius: 9px;
+  border-radius: 11px;
   background: var(--panel); border: 1px solid var(--line-soft);
-  border-left: 4px solid var(--line);
-  font: inherit; color: inherit;
-  transition: border-color .12s, background .12s, box-shadow .12s;
+  border-left: 5px solid var(--line);
+  padding: 6px 8px 10px;
+  transition: border-color .12s, box-shadow .12s;
 }
 .boss[data-def="DEF"]   { border-left-color: var(--def); }
 .boss[data-def="MDEF"]  { border-left-color: var(--mdef); }
 .boss[data-def="SPLIT"] { border-left-color: var(--split); }
 
 /* first boss of a new floor gets a little air, so paired floors read together */
-.boss.is-newfloor { margin-top: 9px; }
+.boss.is-newfloor { margin-top: 12px; }
 .boss.is-newfloor:first-child { margin-top: 0; }
 
-.boss:hover, .boss.is-active {
-  border-color: var(--ink-3); background: var(--panel-2);
+.boss:has(.is-active) {
+  border-color: var(--ink-3);
   box-shadow: 0 2px 5px rgba(30,25,15,.07), 0 8px 20px rgba(30,25,15,.09);
 }
-.boss:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* the main hit target: icon, name, level, swap call - hover/tap for the full card */
+.b-main {
+  width: 100%; text-align: left; cursor: help;
+  display: flex; align-items: center; gap: 14px;
+  padding: 8px; border: 0; border-radius: 8px;
+  background: none; font: inherit; color: inherit;
+  transition: background .12s;
+}
+.b-main:hover, .b-main.is-active { background: var(--panel-2); }
+.b-main:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 .f-tag {
-  flex: none; width: 46px;
-  font: 600 14px/1 "IBM Plex Mono", monospace; letter-spacing: .04em;
-  color: var(--ink); 
+  flex: none; width: 50px;
+  font: 600 15px/1 "IBM Plex Mono", monospace; letter-spacing: .04em;
+  color: var(--ink);
 }
 
 .row-icon {
-  flex: none; width: 32px; height: 32px; border-radius: 7px;
+  flex: none; width: 48px; height: 48px; border-radius: 9px;
   background: var(--bg-2); border: 1px solid var(--line-soft);
-  object-fit: contain; padding: 3px;
+  object-fit: contain; padding: 4px;
 }
 
 .icon-fallback {
   display: grid; place-items: center;
-  font: 600 11px/1 "IBM Plex Mono", monospace; color: var(--ink-3);
+  font: 600 13px/1 "IBM Plex Mono", monospace; color: var(--ink-3);
   letter-spacing: .02em;
 }
-.b-name { flex: 1; min-width: 0; font-size: 15.5px; font-weight: 600;
+.b-name { flex: 1; min-width: 0; font-size: 17px; font-weight: 600;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .b-lv {
-  flex: none; font: 400 11.5px/1 "IBM Plex Mono", monospace;
+  flex: none; font: 400 12px/1 "IBM Plex Mono", monospace;
   color: var(--ink-3); letter-spacing: .06em;
 }
-.boss .pill { flex: none; }
+.b-main .pill { flex: none; }
+
+/* status tags: always visible, each its own hover/tap target */
+.b-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  /* aligns under the name: b-main's 8px pad + 50px floor tag + 14px gap + 48px icon + 14px gap */
+  padding: 2px 8px 0 134px;
+}
+.b-tags .none { font: 500 12px/1 "IBM Plex Mono", monospace; color: var(--ink-3); }
+
+.tag-hot {
+  cursor: help; border: 0; font: inherit; -webkit-appearance: none;
+  transition: filter .1s, box-shadow .1s;
+}
+.tag-hot:hover, .tag-hot.is-active {
+  filter: brightness(0.92);
+  box-shadow: 0 0 0 2px var(--panel), 0 0 0 3.5px var(--ink-3);
+}
+.tag-hot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- tooltip ---------- */
 
@@ -201,14 +227,21 @@ h1 {
 }
 .tip.is-on { opacity: 1; visibility: visible; transform: none; pointer-events: auto; }
 
+/* the small per-tag tooltip: just a name and one line, no header/sections */
+.tip.tip--mini { width: 240px; padding: 12px 14px; }
+.tip-mini h4 {
+  margin: 0 0 5px; font-size: 13.5px; font-weight: 600; color: var(--ink);
+}
+.tip-mini p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-2); }
+
 .tip-head {
   display: flex; align-items: flex-start; gap: 11px;
   padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--line-soft);
 }
 .tip-icon {
-  flex: none; width: 44px; height: 44px; border-radius: 9px;
+  flex: none; width: 52px; height: 52px; border-radius: 10px;
   background: var(--bg-2); border: 1px solid var(--line-soft);
-  object-fit: contain; padding: 4px;
+  object-fit: contain; padding: 5px;
 }
 .tip-title { min-width: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .tip-head h3 { margin: 0; width: 100%; font-size: 16px; font-weight: 600; }
@@ -281,8 +314,10 @@ h1 {
 @media (max-width: 640px) {
   .masthead { padding: 44px 0 30px; }
   .key .hint { margin-left: 0; width: 100%; }
-  .b-lv { display: none; }   /* level is in the card; keep the line readable */
-  .f-tag { width: 40px; font-size: 13px; }
+  .b-lv { display: none; }   /* level is in the full card; keep the line readable */
+  .f-tag { width: 34px; font-size: 13px; }
+  .row-icon, .icon-fallback.row-icon { width: 38px; height: 38px; }
+  .b-tags { padding-left: 106px; }   /* 8 + 34 (f-tag) + 12 (gap) + 38 (icon) + 14 (gap) */
   .tip { width: calc(100vw - 24px); }
 }
 
