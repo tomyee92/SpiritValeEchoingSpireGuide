@@ -1,5 +1,6 @@
 /* The Echoing Spire climb sheet — light "paper" theme.
-   Rows stay minimal; everything else lives in the hover tooltip. */
+   Everything about a boss lives on its row; only a single status tag's own
+   explainer is still behind a point/tap tooltip. */
 
 :root {
   --bg:        #f6f4ef;   /* warm paper */
@@ -164,16 +165,12 @@ h1 {
 
 .b-body { flex: 1 1 auto; min-width: 0; width: 100%; padding-block: 4px; }
 
-/* the main hit target: icon, name, level, swap call - hover/tap for the full card */
+/* icon, name, level, swap call - plain, not interactive: everything about
+   this boss is already visible on the row, nothing left to reveal here */
 .b-main {
-  width: 100%; min-width: 0; text-align: left; cursor: help;
-  display: flex; align-items: center; gap: 14px;
-  padding: 8px; border: 0; border-radius: 8px;
-  background: none; font: inherit; color: inherit;
-  transition: background .12s;
+  width: 100%; min-width: 0;
+  display: flex; align-items: center; gap: 14px; padding: 8px;
 }
-.b-main:hover, .b-main.is-active { background: var(--panel-2); }
-.b-main:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 .f-tag {
   flex: none; width: 50px;
@@ -210,7 +207,11 @@ h1 {
 .b-tags .none { font: 500 11px/1 "IBM Plex Mono", monospace; color: var(--ink-3); }
 
 .tag-hot {
-  cursor: help; border: 0; font: inherit; -webkit-appearance: none;
+  /* font-family only, NOT the "font" shorthand: that resets font-size too,
+     and since .tag-hot and .cc/.tag share specificity, source order alone
+     would decide the winner - it clobbered .cc's 10.5px down the line and
+     was the actual cause of Stun/Freeze/etc rendering oversized. */
+  cursor: help; border: 0; font-family: inherit; -webkit-appearance: none;
   transition: filter .1s, box-shadow .1s;
 }
 .tag-hot:hover, .tag-hot.is-active {
@@ -219,24 +220,37 @@ h1 {
 }
 .tag-hot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* debuff/DoT tags (Blind, Bleed 10s, Water Exposure, ...) - same size as the
+   colored CC tags above, just neutral-toned since they're not hard lockouts */
 .tag {
   font: 500 10.5px/1.3 "IBM Plex Mono", monospace;
   padding: 3px 7px; border-radius: 4px;
   background: var(--bg-2); border: 1px solid var(--line-soft); color: var(--ink-2);
 }
 
-/* always-visible stat bars filling the space to the right of the row -
-   no hover needed for these, unlike the deeper attack-pattern/prepare card */
+/* always-visible stats filling the space to the right of the row -
+   element, damage type, and the gear-prep line - no hover needed for any of it */
 .b-stats {
   flex: none; width: 250px; min-width: 0;
   display: grid; gap: 8px;
   padding-right: 6px;
 }
 /* min-width:0 throughout: grid/flex items default to min-width:auto, which
-   lets nowrap text (long element captions) push the column wider than its
-   fixed track instead of truncating - this is what actually lets the
-   ellipsis in .stat-cap take effect. */
+   lets nowrap text push a column wider than its fixed track instead of
+   truncating or wrapping - this is what caused the earlier mobile overflow. */
 .stat { min-width: 0; }
+
+/* element: its own icon (self-hosted, same set the source site uses) plus
+   its damage-share number - a single blended bar got unreadable past ~3 elements */
+.el-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.el-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font: 600 10.5px/1 "IBM Plex Mono", monospace; color: var(--ink-2);
+  background: var(--bg-2); border: 1px solid var(--line-soft);
+  padding: 3px 7px 3px 5px; border-radius: 4px;
+}
+.el-icon { display: block; width: 14px; height: 14px; object-fit: contain; }
+
 .stat-top {
   display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
   margin-bottom: 4px; min-width: 0;
@@ -255,94 +269,38 @@ h1 {
 }
 .mini-bar { height: 7px; margin-bottom: 0; }
 
-/* ---------- tooltip ---------- */
+.stat-prep { padding-top: 2px; border-top: 1px dashed var(--line-soft); }
+.stat-prep-text {
+  display: block; margin-top: 4px; text-align: left;
+  font: 600 11.5px/1.4 "IBM Plex Mono", monospace; color: var(--ink);
+}
+
+/* ---------- tooltip: one purpose only now - what a single status tag does ---------- */
 
 .tip {
   position: fixed; z-index: 60; top: 0; left: 0;
-  width: 304px; max-width: calc(100vw - 24px);
+  width: 240px; max-width: calc(100vw - 24px);
   max-height: calc(100vh - 24px); overflow-y: auto;
-  padding: 16px 17px;
+  padding: 12px 14px;
   background: var(--panel); color: var(--ink);
   border: 1px solid var(--line); border-radius: var(--radius);
   box-shadow: 0 4px 10px rgba(30,25,15,.08), 0 18px 44px rgba(30,25,15,.18);
   opacity: 0; visibility: hidden; transform: translateY(3px);
   transition: opacity .13s, transform .13s, visibility .13s;
-  pointer-events: none;   /* enabled once shown, so tall cards can be scrolled */
+  pointer-events: none;   /* enabled once shown, so a long one can be scrolled */
 }
 .tip.is-on { opacity: 1; visibility: visible; transform: none; pointer-events: auto; }
 
-/* the small per-tag tooltip: just a name and one line, no header/sections */
-.tip.tip--mini { width: 240px; padding: 12px 14px; }
 .tip-mini h4 {
   margin: 0 0 5px; font-size: 13.5px; font-weight: 600; color: var(--ink);
 }
 .tip-mini p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-2); }
-
-.tip-head {
-  display: flex; align-items: flex-start; gap: 11px;
-  padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--line-soft);
-}
-.tip-icon {
-  flex: none; width: 52px; height: 52px; border-radius: 10px;
-  background: var(--bg-2); border: 1px solid var(--line-soft);
-  object-fit: contain; padding: 5px;
-}
-.tip-title { min-width: 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.tip-head h3 { margin: 0; width: 100%; font-size: 16px; font-weight: 600; }
-.tip-head .lv {
-  margin-left: auto; font: 500 11px/1 "IBM Plex Mono", monospace;
-  color: var(--ink-3); letter-spacing: .08em;
-}
-
-.tip-sec { margin-bottom: 11px; }
-.tip-sec:last-child { margin-bottom: 0; }
-
-.tip-sec h4 {
-  margin: 0 0 7px; font: 600 10px/1 "IBM Plex Mono", monospace;
-  letter-spacing: .16em; text-transform: uppercase; color: var(--ink-3);
-}
 
 .bar {
   display: flex; height: 9px; border-radius: 5px; overflow: hidden;
   background: var(--bg-2); margin-bottom: 7px;
 }
 .bar span { display: block; height: 100%; }
-
-.legend { display: flex; flex-wrap: wrap; gap: 3px 10px; }
-.legend i {
-  font: 500 11.5px/1.3 "IBM Plex Mono", monospace; font-style: normal;
-  color: var(--ink-2); display: inline-flex; align-items: center; gap: 5px;
-}
-.legend i::before {
-  content: ""; width: 8px; height: 8px; border-radius: 2px;
-  background: var(--sw, var(--ink-3));
-}
-
-.tip ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.tip li { font-size: 13px; color: var(--ink-2); }
-
-.tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.tag {
-  font: 500 11px/1 "IBM Plex Mono", monospace;
-  padding: 5px 7px; border-radius: 5px;
-  background: var(--bg-2); border: 1px solid var(--line-soft); color: var(--ink-2);
-}
-.tag.is-curse { background: #fdeff2; border-color: rgba(184,31,66,.35); color: var(--curse); font-weight: 600; }
-
-.prepare {
-  margin: 0; padding: 11px 12px; border-radius: 8px;
-  background: var(--bg-2); border: 1px solid var(--line-soft);
-  font: 600 12.5px/1.5 "IBM Plex Mono", monospace; color: var(--ink);
-}
-.prepare em {
-  color: var(--ink-3); font-style: normal; font-weight: 400;
-  display: block; margin-top: 5px; font-size: 11.5px; line-height: 1.45;
-}
-
-.notes-slot {
-  margin-top: 9px; padding: 10px 12px; border-radius: 8px;
-  border: 1px dashed var(--line); color: var(--ink-3); font-size: 12.5px;
-}
 
 /* ---------- footer ---------- */
 
@@ -369,7 +327,7 @@ h1 {
 @media (max-width: 640px) {
   .masthead { padding: 44px 0 30px; }
   .key .hint { margin-left: 0; width: 100%; }
-  .b-lv { display: none; }   /* level is in the full card; keep the line readable */
+  .b-lv { display: none; }   /* keep the line readable at this width */
   .f-tag { width: 34px; font-size: 13px; }
   .row-icon, .icon-fallback.row-icon { width: 38px; height: 38px; }
   .b-tags { padding-left: 106px; }   /* 8 + 34 (f-tag) + 12 (gap) + 38 (icon) + 14 (gap) */

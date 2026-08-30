@@ -8,21 +8,18 @@ organized the way you actually climb: **one line per boss, in climb order** — 
 then F15, straight down the tower. A floor with two bosses repeats its number so every line
 stands on its own.
 
-Each boss block shows everything at a glance, no hovering required:
+Every boss block shows everything at a glance, nothing behind a hover:
 
-- **DEF/MDEF/SPLIT**, element split, and damage-type split (Melee+Ranged vs Magic) —
-  the element and damage bars sit to the right of the row (below it on narrower
-  screens), sized like the source guide's compact tags, not oversized badges.
+- **DEF/MDEF/SPLIT**, element (icon + damage-share number per element, same
+  icon set the source site uses — not a single blended bar, which got
+  unreadable past ~3 elements), damage-type split, and the gear-prep line.
 - **Every status tag** (Silence, Freeze, Stun, Curse, every debuff and DoT) is
-  always visible right under the name.
+  always visible right under the name, sized to match — no tag is bigger or
+  bolder than another.
 
-Two things still need a point/tap:
-
-- **Any status tag** — its exact duration/chance and what it does to you.
-- **Icon + name + level + DEF/MDEF pill** — the deeper combat card: attack
-  pacing and the gear-prep line (the only things that didn't fit on the row).
-
-Tap does the same on touch; keyboard focus works on both target types too.
+The only thing still behind a point/tap: **a single status tag's own
+explainer** — its exact duration/chance and what it does to you (e.g. what
+"Curse" actually means). Tap does the same on touch; keyboard focus works too.
 
 There is no search and no filtering by design — you scroll the tower the way you climb it.
 
@@ -68,7 +65,7 @@ Each boss entry:
 | `deb` | debuff names |
 | `prepare` | the one-line gear call |
 | `icon` | path to a self-hosted boss icon, or `null` when none exists (see below) |
-| `notes`, `drops`, `links` | **ours to fill in** — currently empty everywhere |
+| `notes`, `drops`, `links` | **ours to fill in** — currently empty everywhere; `notes` isn't rendered yet |
 
 Adding a boss is just another object in the array; floors group themselves and the tooltip
 content derives from the data automatically.

@@ -1,11 +1,9 @@
 /* Echoing Spire climb sheet.
  *
- * Each row has two independent hover/tap targets:
- *  - .b-main  (icon, name, level, DEF/MDEF pill) -> the full combat card:
- *    damage split, element resist, attack pacing, gear prep.
- *  - .tag-hot (each Silence/Freeze/Stun/Curse/debuff tag, always visible
- *    on the row - not hidden) -> a small tooltip with just that effect's
- *    duration/chance and what it does to you.
+ * Everything about a boss is visible on its row - element (icon + % chips,
+ * matching the source guide), damage-type split, attack pacing, gear prep,
+ * and every status tag. The only thing still behind a point/tap is what a
+ * single status tag (Silence, Curse, Blind, ...) actually does - .tag-hot.
  */
 (function () {
   "use strict";
@@ -119,50 +117,30 @@
     }).join("");
   }
 
-  function elementBarSpans(elements) {
+  // One chip per element: its own icon (self-hosted, same set the source
+  // site uses) plus its damage-share number - not a single blended bar,
+  // which got unreadable once a boss had 4+ elements.
+  function elementChips(elements) {
     return elements.map(function (e) {
-      return '<span style="width:' + e[1] + '%;background:var(--el-' + e[0] + ',var(--ink-3))"></span>';
+      return '<span class="el-chip"><img class="el-icon" src="assets/img/elements/' + esc(e[0]) +
+        '.webp" alt="" width="14" height="14" loading="lazy">' + e[1] + "</span>";
     }).join("");
   }
 
   function rowStatsHTML(b) {
     var phys = b.mix.mel + b.mix.ran;
-    var dmgCaption = (phys > b.mix.mag ? phys + "% DEF" : b.mix.mag + "% MDEF");
-    var elCaption = b.elements.map(function (e) { return e[0] + " " + e[1]; }).join(" · ");
+    var dmgCaption = (phys > b.mix.mag ? phys + "% DEF" : b.mix.mag + "% MDEF") +
+      " · " + b.autoPct + "% auto";
 
     return '<div class="b-stats">' +
-        '<div class="stat"><div class="stat-top"><span class="stat-label">Element</span>' +
-          '<span class="stat-cap">' + esc(elCaption) + '</span></div>' +
-          '<div class="bar mini-bar">' + elementBarSpans(b.elements) + "</div></div>" +
+        '<div class="stat"><span class="stat-label">Element</span>' +
+          '<div class="el-chips">' + elementChips(b.elements) + "</div></div>" +
         '<div class="stat"><div class="stat-top"><span class="stat-label">Damage</span>' +
           '<span class="stat-cap">' + esc(dmgCaption) + '</span></div>' +
           '<div class="bar mini-bar">' + mixBarSpans(mixBarParts(b)) + "</div></div>" +
+        '<div class="stat stat-prep"><span class="stat-label">Prepare</span>' +
+          '<span class="stat-cap stat-prep-text">' + esc(b.prepare) + "</span></div>" +
       "</div>";
-  }
-
-  /* ---------- full combat card (hover the icon/name area) ---------- */
-  /* Element and damage-type already sit on the row itself now - this only
-     carries what wouldn't fit there: attack pacing, gear prep, notes. */
-
-  function fullCardHTML(b) {
-    var pace = '<div class="tip-sec"><h4>Attack pattern</h4><ul>' +
-      "<li>" + b.autoPct + "% of output is auto-attack</li>" +
-      "<li>~" + b.swings + " swings per 60s</li></ul></div>";
-
-    var notes = b.notes
-      ? '<div class="notes-slot" style="border-style:solid;color:var(--ink-2)">' + esc(b.notes) + "</div>"
-      : '<div class="notes-slot">No strategy notes yet.</div>';
-
-    return '<div class="tip-head">' +
-        iconHTML(b, "tip-icon", 52) +
-        '<div class="tip-title"><h3>' + esc(b.name) + "</h3>" +
-        '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
-        '<span class="lv">F' + b.floor + " · LV " + b.level + "</span></div>" +
-      "</div>" +
-      pace +
-      '<div class="tip-sec"><p class="prepare">Prepare: ' + esc(b.prepare) +
-        (b.multi ? "<em>* Element spread is too wide to fully resist — lean on raw mitigation instead of chasing a resist set.</em>" : "") +
-      "</p>" + notes + "</div>";
   }
 
   function miniTipHTML(btn) {
@@ -189,13 +167,13 @@
       return '<div class="boss' + (j === 0 ? " is-newfloor" : "") + '" data-def="' + b.def + '"' +
           (j === 0 ? ' id="floor-' + f.floor + '"' : "") + '>' +
         '<div class="b-body">' +
-          '<button type="button" class="b-main" data-i="' + b._i + '" aria-describedby="tip">' +
+          '<div class="b-main">' +
             '<span class="f-tag">F' + f.floor + "</span>" +
             iconHTML(b, "row-icon", 48) +
             '<span class="b-name">' + esc(b.name) + "</span>" +
             '<span class="b-lv">LV ' + b.level + "</span>" +
             '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
-          "</button>" +
+          "</div>" +
           '<div class="b-tags">' + ccTags(b) + "</div>" +
         "</div>" +
         rowStatsHTML(b) +
@@ -239,15 +217,7 @@
     hide();
     current = el;
 
-    var mainBtn = el.closest(".b-main");
-    if (mainBtn) {
-      tip.innerHTML = fullCardHTML(BOSSES[+mainBtn.dataset.i]);
-      tip.classList.remove("tip--mini");
-    } else {
-      tip.innerHTML = miniTipHTML(el);
-      tip.classList.add("tip--mini");
-    }
-
+    tip.innerHTML = miniTipHTML(el);
     tip.classList.add("is-on");
     tip.setAttribute("aria-hidden", "false");
     el.classList.add("is-active");
@@ -264,7 +234,7 @@
   }
 
   var list = $("#list");
-  var TARGET_SEL = ".b-main, .tag-hot";
+  var TARGET_SEL = ".tag-hot";
 
   // Touch browsers fire a synthetic mouseover right before click on first tap.
   // If both hover and click-toggle are wired unconditionally, that mouseover
