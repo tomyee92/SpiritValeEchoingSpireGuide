@@ -283,7 +283,9 @@ h1 {
    thing that actually predicts what element you'll get hit by next,
    replacing the old "X% auto-attack" composite that wasn't actionable */
 .skill-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.skill-chip { border-left: 4px solid var(--el, var(--ink-3)); padding-left: 8px; }
+.skill-chip {
+  background: var(--el, var(--ink-3)); border-color: transparent; color: #fff;
+}
 
 .stat-prep-text {
   display: block; margin-top: 6px;
