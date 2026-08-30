@@ -196,6 +196,7 @@
         '<div class="b-side">' +
           '<span class="stat-label">Prepare</span>' +
           '<span class="stat-prep-text">' + esc(b.prepare) + "</span>" +
+          (b.reflect ? '<div class="reflect-note">⚠ ' + esc(b.reflect) + "</div>" : "") +
           '<div class="b-side-more">More notes and tips coming soon.</div>' +
         "</div>" +
 

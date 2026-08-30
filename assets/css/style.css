@@ -291,6 +291,14 @@ h1 {
   font: 700 14px/1.4 "IBM Plex Mono", monospace; color: var(--ink);
 }
 
+/* confirmed via the skill/effect's own page - not every "shield"-named
+   skill reflects, so this only appears on the 4 bosses that actually do */
+.reflect-note {
+  margin-top: 10px; padding: 8px 10px; border-radius: 8px;
+  background: #fdf3e2; border: 1px solid rgba(168,84,0,.35);
+  font: 600 13px/1.4 "IBM Plex Mono", monospace; color: var(--def);
+}
+
 .b-side-more {
   margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line-soft);
   font-size: 13px; color: var(--ink-3); font-style: italic;

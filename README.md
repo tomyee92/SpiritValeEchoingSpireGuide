@@ -26,6 +26,11 @@ The only thing still behind a point/tap: **a single status tag's own
 explainer** — its exact duration/chance and what it does to you (e.g. what
 "Curse" actually means). Tap does the same on touch; keyboard focus works too.
 
+A boss that reflects damage back at you gets a highlighted warning in its
+right-side zone (currently: Ice Mage, Lady Fey, Naga, Seraphim Arbiter, all
+via "Spell Shield" - +50% Magic reflect for 10s, confirmed against the
+skill's own effect page, not guessed from its name).
+
 The climb list itself runs nearly full-width — there's a lot of data per row
 now and the narrower centered column from earlier passes wasted the screen.
 Below ~1100px the three zones stack instead of sitting side by side.
@@ -85,6 +90,7 @@ Each boss entry:
 | `icon` | path to a self-hosted boss icon, or `null` when none exists (see below) |
 | `combat` | Max HP / ATK / MATK / DEF+flat / MDEF+flat / Hit / Flee / attack interval / STR-LUK |
 | `skills` | every skill the boss casts: `{ name, lv, element, dmgType, applies }`, scraped per-skill from spiritvalers.com |
+| `reflect` | present only on bosses that reflect damage back at you, confirmed via the skill/effect's own page; omitted otherwise |
 | `notes`, `drops`, `links` | **ours to fill in** — currently empty everywhere; `notes` isn't rendered yet |
 
 Adding a boss is just another object in the array; floors group themselves and the tooltip
