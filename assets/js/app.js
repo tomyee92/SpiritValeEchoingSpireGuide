@@ -121,8 +121,10 @@
       var title = sk.name + (sk.lv ? " · Lv " + sk.lv : "");
       var effects = sk.applies.length ? sk.applies.join(", ") : "No status effect.";
       var body = sk.element + " " + sk.dmgType + " skill. " + effects;
-      return '<button type="button" class="tag-hot tag skill-chip" style="--el:var(--el-' + esc(sk.element) +
-        ',var(--ink-3))" data-tip-title="' + esc(title) + '" data-tip-body="' + esc(body) + '">' +
+      return '<button type="button" class="tag-hot tag skill-chip" data-tip-title="' + esc(title) +
+        '" data-tip-body="' + esc(body) + '">' +
+        '<img class="skill-el-icon" src="assets/img/elements/' + esc(sk.element) +
+        '.webp" alt="' + esc(sk.element) + '" width="20" height="20" loading="lazy">' +
         esc(sk.name) + "</button>";
     }).join("");
   }

@@ -279,13 +279,12 @@ h1 {
   text-transform: uppercase; color: var(--ink-3); flex: none;
 }
 
-/* every skill the boss casts, each accented with its own element - the
-   thing that actually predicts what element you'll get hit by next,
-   replacing the old "X% auto-attack" composite that wasn't actionable */
-.skill-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.skill-chip {
-  background: var(--el, var(--ink-3)); border-color: transparent; color: #fff;
-}
+/* every skill the boss casts, each with its own element icon - the thing
+   that actually predicts what element you'll get hit by next, replacing
+   the old "X% auto-attack" composite that wasn't actionable */
+.skill-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
+.skill-chip { display: inline-flex; align-items: center; gap: 6px; }
+.skill-el-icon { display: block; width: 20px; height: 20px; object-fit: contain; flex: none; }
 
 .stat-prep-text {
   display: block; margin-top: 6px;

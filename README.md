@@ -16,9 +16,8 @@ Every boss block is three zones, left to right:
   own hover-only "combat card", scraped once into `bosses.js` and always
   visible here), and every status tag (Silence, Freeze, Stun, Curse, every
   debuff and DoT). Bottom: Element (icon + damage-share number per element)
-  and every skill the boss actually casts, each accented by that skill's own
-  element (scraped from spiritvalers.com/#/monsters and each skill's own
-  page) — point at a skill to see its element/damage type and what status
+  and every skill the boss actually casts, each shown with its own element icon (scraped from spiritvalers.com/#/monsters
+  and each skill's own page) — point at a skill to see its element/damage type and what status
   effect it applies. This replaced an "X% auto-attack" composite that told
   you nothing you could act on.
 - **Right** — the gear-prep line, plus a slot for future notes/tips.
