@@ -8,20 +8,16 @@ organized the way you actually climb: **one line per boss, in climb order** — 
 then F15, straight down the tower. A floor with two bosses repeats its number so every line
 stands on its own.
 
-Every boss block shows everything at a glance, nothing behind a hover:
+Every boss block is three zones, left to right:
 
-- **Name, boss type, level, DEF/MDEF/SPLIT.**
-- **Combat stats** — Max HP, ATK/MATK, DEF/MDEF (+ flat), Hit/Flee, attack
-  interval. This is the source site's own "combat card", which only ever
-  showed on hovering the boss name there; scraped once into `bosses.js` and
-  shown here without needing a hover at all.
-- **Element** — icon + damage-share number per element (same icon set the
-  source site uses), not a single blended bar, which got unreadable past
-  ~3 elements.
-- **Damage-type split**, and the **gear-prep line**.
-- **Every status tag** (Silence, Freeze, Stun, Curse, every debuff and DoT),
-  always visible right under the name, sized to match — no tag is bigger or
-  bolder than another.
+- **Left (identity)** — floor tag, icon, name.
+- **Middle** — top: boss type, level, DEF/MDEF/SPLIT, Combat stats (Max HP,
+  ATK/MATK, DEF/MDEF + flat, Hit/Flee, attack interval — the source site's
+  own hover-only "combat card", scraped once into `bosses.js` and always
+  visible here), and every status tag (Silence, Freeze, Stun, Curse, every
+  debuff and DoT). Bottom: Element (icon + damage-share number per element)
+  and the damage-type split.
+- **Right** — the gear-prep line, plus a slot for future notes/tips.
 
 The only thing still behind a point/tap: **a single status tag's own
 explainer** — its exact duration/chance and what it does to you (e.g. what
@@ -29,6 +25,7 @@ explainer** — its exact duration/chance and what it does to you (e.g. what
 
 The climb list itself runs nearly full-width — there's a lot of data per row
 now and the narrower centered column from earlier passes wasted the screen.
+Below ~1100px the three zones stack instead of sitting side by side.
 
 There is no search and no filtering by design — you scroll the tower the way you climb it.
 

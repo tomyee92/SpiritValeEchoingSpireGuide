@@ -141,24 +141,6 @@
     }).join("");
   }
 
-  function rowStatsHTML(b) {
-    var phys = b.mix.mel + b.mix.ran;
-    var dmgCaption = (phys > b.mix.mag ? phys + "% DEF" : b.mix.mag + "% MDEF") +
-      " · " + b.autoPct + "% auto";
-
-    return '<div class="b-stats">' +
-        '<div class="stat"><span class="stat-label">Combat</span>' +
-          '<div class="cstats">' + combatChips(b.combat) + "</div></div>" +
-        '<div class="stat"><span class="stat-label">Element</span>' +
-          '<div class="el-chips">' + elementChips(b.elements) + "</div></div>" +
-        '<div class="stat"><div class="stat-top"><span class="stat-label">Damage</span>' +
-          '<span class="stat-cap">' + esc(dmgCaption) + '</span></div>' +
-          '<div class="bar mini-bar">' + mixBarSpans(mixBarParts(b)) + "</div></div>" +
-        '<div class="stat stat-prep"><span class="stat-label">Prepare</span>' +
-          '<span class="stat-cap stat-prep-text">' + esc(b.prepare) + "</span></div>" +
-      "</div>";
-  }
-
   function miniTipHTML(btn) {
     return '<div class="tip-mini"><h4>' + esc(btn.dataset.tipTitle) + "</h4><p>" +
       esc(btn.dataset.tipBody) + "</p></div>";
@@ -174,26 +156,52 @@
     f.bosses.push(b);
   });
 
-  // One block per boss, in climb order: F5 › boss › swap call, its status
-  // tags below that, and element/damage-type bars filling the space to the
-  // right - all visible without hovering. A floor with two bosses repeats
-  // its number, so every block stands on its own.
+  // Three zones per boss row:
+  //   left:          icon, floor tag, name
+  //   middle-top:    type, level, DEF/MDEF, combat stats, status tags
+  //   middle-bottom: element, damage-type split
+  //   right:         Prepare - and where future notes/tips go
+  // A floor with two bosses repeats its number, so every block stands alone.
   $("#list").innerHTML = floors.map(function (f) {
     return f.bosses.map(function (b, j) {
+      var phys = b.mix.mel + b.mix.ran;
+      var dmgCaption = (phys > b.mix.mag ? phys + "% DEF" : b.mix.mag + "% MDEF") +
+        " · " + b.autoPct + "% auto";
+
       return '<div class="boss' + (j === 0 ? " is-newfloor" : "") + '" data-def="' + b.def + '"' +
           (j === 0 ? ' id="floor-' + f.floor + '"' : "") + '>' +
-        '<div class="b-body">' +
-          '<div class="b-main">' +
-            '<span class="f-tag">F' + f.floor + "</span>" +
-            iconHTML(b, "row-icon", 48) +
-            '<span class="b-name">' + esc(b.name) + "</span>" +
-            '<span class="b-type">' + esc(b.combat.type) + "</span>" +
-            '<span class="b-lv">LV ' + b.level + "</span>" +
-            '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
-          "</div>" +
-          '<div class="b-tags">' + ccTags(b) + "</div>" +
+
+        '<div class="b-id">' +
+          '<span class="f-tag">F' + f.floor + "</span>" +
+          iconHTML(b, "row-icon", 48) +
+          '<span class="b-name">' + esc(b.name) + "</span>" +
         "</div>" +
-        rowStatsHTML(b) +
+
+        '<div class="b-mid">' +
+          '<div class="b-mid-top">' +
+            '<div class="b-head-row">' +
+              '<span class="b-type">' + esc(b.combat.type) + "</span>" +
+              '<span class="b-lv">LV ' + b.level + "</span>" +
+              '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
+            "</div>" +
+            '<div class="cstats">' + combatChips(b.combat) + "</div>" +
+            '<div class="b-tags">' + ccTags(b) + "</div>" +
+          "</div>" +
+          '<div class="b-mid-bottom">' +
+            '<div class="stat"><span class="stat-label">Element</span>' +
+              '<div class="el-chips">' + elementChips(b.elements) + "</div></div>" +
+            '<div class="stat"><div class="stat-top"><span class="stat-label">Damage</span>' +
+              '<span class="stat-cap">' + esc(dmgCaption) + '</span></div>' +
+              '<div class="bar mini-bar">' + mixBarSpans(mixBarParts(b)) + "</div></div>" +
+          "</div>" +
+        "</div>" +
+
+        '<div class="b-side">' +
+          '<span class="stat-label">Prepare</span>' +
+          '<span class="stat-prep-text">' + esc(b.prepare) + "</span>" +
+          '<div class="b-side-more">More notes and tips coming soon.</div>' +
+        "</div>" +
+
       "</div>";
     }).join("");
   }).join("");
