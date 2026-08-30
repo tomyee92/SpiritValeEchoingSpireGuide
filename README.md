@@ -10,16 +10,25 @@ stands on its own.
 
 Every boss block shows everything at a glance, nothing behind a hover:
 
-- **DEF/MDEF/SPLIT**, element (icon + damage-share number per element, same
-  icon set the source site uses — not a single blended bar, which got
-  unreadable past ~3 elements), damage-type split, and the gear-prep line.
-- **Every status tag** (Silence, Freeze, Stun, Curse, every debuff and DoT) is
+- **Name, boss type, level, DEF/MDEF/SPLIT.**
+- **Combat stats** — Max HP, ATK/MATK, DEF/MDEF (+ flat), Hit/Flee, attack
+  interval. This is the source site's own "combat card", which only ever
+  showed on hovering the boss name there; scraped once into `bosses.js` and
+  shown here without needing a hover at all.
+- **Element** — icon + damage-share number per element (same icon set the
+  source site uses), not a single blended bar, which got unreadable past
+  ~3 elements.
+- **Damage-type split**, and the **gear-prep line**.
+- **Every status tag** (Silence, Freeze, Stun, Curse, every debuff and DoT),
   always visible right under the name, sized to match — no tag is bigger or
   bolder than another.
 
 The only thing still behind a point/tap: **a single status tag's own
 explainer** — its exact duration/chance and what it does to you (e.g. what
 "Curse" actually means). Tap does the same on touch; keyboard focus works too.
+
+The climb list itself runs nearly full-width — there's a lot of data per row
+now and the narrower centered column from earlier passes wasted the screen.
 
 There is no search and no filtering by design — you scroll the tower the way you climb it.
 
@@ -65,6 +74,7 @@ Each boss entry:
 | `deb` | debuff names |
 | `prepare` | the one-line gear call |
 | `icon` | path to a self-hosted boss icon, or `null` when none exists (see below) |
+| `combat` | Max HP / ATK / MATK / DEF+flat / MDEF+flat / Hit / Flee / attack interval / STR-LUK |
 | `notes`, `drops`, `links` | **ours to fill in** — currently empty everywhere; `notes` isn't rendered yet |
 
 Adding a boss is just another object in the array; floors group themselves and the tooltip

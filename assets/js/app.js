@@ -127,12 +127,28 @@
     }).join("");
   }
 
+  // The source site's "combat card" - Max HP, ATK/MATK, DEF/MDEF (+flat),
+  // Hit/Flee, attack interval - only ever showed on hover there. Scraped
+  // once and stored in bosses.js as `combat`; shown here as small chips so
+  // it never needs a hover at all.
+  function combatChips(c) {
+    return [
+      ["HP", c.hp], ["ATK", c.atk], ["MATK", c.matk],
+      ["DEF", c.def + "+" + c.defFlat], ["MDEF", c.mdef + "+" + c.mdefFlat],
+      ["Hit", c.hit], ["Flee", c.flee], ["SPD", c.atkSpeed]
+    ].map(function (p) {
+      return '<span class="cstat"><b>' + p[0] + "</b>" + esc(String(p[1])) + "</span>";
+    }).join("");
+  }
+
   function rowStatsHTML(b) {
     var phys = b.mix.mel + b.mix.ran;
     var dmgCaption = (phys > b.mix.mag ? phys + "% DEF" : b.mix.mag + "% MDEF") +
       " · " + b.autoPct + "% auto";
 
     return '<div class="b-stats">' +
+        '<div class="stat"><span class="stat-label">Combat</span>' +
+          '<div class="cstats">' + combatChips(b.combat) + "</div></div>" +
         '<div class="stat"><span class="stat-label">Element</span>' +
           '<div class="el-chips">' + elementChips(b.elements) + "</div></div>" +
         '<div class="stat"><div class="stat-top"><span class="stat-label">Damage</span>' +
@@ -171,6 +187,7 @@
             '<span class="f-tag">F' + f.floor + "</span>" +
             iconHTML(b, "row-icon", 48) +
             '<span class="b-name">' + esc(b.name) + "</span>" +
+            '<span class="b-type">' + esc(b.combat.type) + "</span>" +
             '<span class="b-lv">LV ' + b.level + "</span>" +
             '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
           "</div>" +

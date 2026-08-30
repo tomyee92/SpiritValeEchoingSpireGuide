@@ -5,6 +5,9 @@
  * mix      = share of damage by type, percent (mel/ran/mag). Mel+Ran are stopped by DEF, Mag by MDEF.
  * elements = [name, percent] pairs, highest first.
  * cc       = [type, duration, chance%] per landed cast.
+ * combat   = Max HP / ATK / MATK / DEF+flat / MDEF+flat / Hit / Flee / attack
+ *            interval / STR-LUK, scraped from the source site's own hover
+ *            "combat card" (hidden there behind a hover; always visible here).
  * def      = the swap call: DEF | MDEF | SPLIT.
  * multi    = element spread too wide to fully resist with armor.
  * notes / drops / links are intentionally empty - filled in as we go.
@@ -27,188 +30,188 @@ window.SPIRE_DATA = {
   },
 
   bosses: [
-    { floor: 5, level: 105, name: "Vorpal Hare", icon: "assets/img/bosses/hare.webp", def: "DEF", multi: false,
+    { floor: 5, level: 105, name: "Vorpal Hare", icon: "assets/img/bosses/hare.webp", combat: { type: "Melee Runner", hp: "17,000,000", atk: "27,931", matk: "6,788", def: 63, defFlat: 249, mdef: 33, mdefFlat: 153, hit: 210, flee: 262, atkSpeed: "0.47s", stats: { STR: 263, VIT: 158, AGI: 315, DEX: 210, INT: 53, LUK: 263 } }, def: "DEF", multi: false,
       elements: [["Neutral", 100]], mix: { mel: 88, ran: 0, mag: 12 }, autoPct: 58, swings: 123,
       cc: [["Stun", "3s", 75], ["Stun", "3s", 100]], dot: [], deb: [],
       prepare: "DEF Neutral · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 10, level: 110, name: "Vespa", icon: "assets/img/bosses/sting.webp", def: "DEF", multi: false,
+    { floor: 10, level: 110, name: "Vespa", icon: "assets/img/bosses/sting.webp", combat: { type: "Melee Flyer", hp: "16,000,000", atk: "22,595", matk: "7,452", def: 33, defFlat: 231, mdef: 33, mdefFlat: 147, hit: 192, flee: 302, atkSpeed: "0.47s", stats: { STR: 165, VIT: 110, AGI: 385, DEX: 165, INT: 55, LUK: 110 } }, def: "DEF", multi: false,
       elements: [["Neutral", 93], ["Wind", 7]], mix: { mel: 53, ran: 33, mag: 14 }, autoPct: 53, swings: 124,
       cc: [], dot: [], deb: ["Blind"],
       prepare: "DEF Neutral", notes: "", drops: [], links: [] },
 
-    { floor: 15, level: 115, name: "Lycanthrope", icon: "assets/img/bosses/werewolf.webp", def: "DEF", multi: false,
+    { floor: 15, level: 115, name: "Lycanthrope", icon: "assets/img/bosses/werewolf.webp", combat: { type: "Melee Ravager", hp: "27,000,000", atk: "41,141", matk: "10,367", def: 69, defFlat: 309, mdef: 36, mdefFlat: 222, hit: 230, flee: 230, atkSpeed: "0.47s", stats: { STR: 345, VIT: 230, AGI: 230, DEX: 230, INT: 115, LUK: 230 } }, def: "DEF", multi: false,
       elements: [["Neutral", 91], ["Undead", 9]], mix: { mel: 56, ran: 29, mag: 15 }, autoPct: 37, swings: 122,
       cc: [], dot: [["Bleed", "10s"]], deb: [],
       prepare: "DEF Neutral", notes: "", drops: [], links: [] },
 
-    { floor: 20, level: 120, name: "Raiju", icon: "assets/img/bosses/cat-bolt.webp", def: "SPLIT", multi: true,
+    { floor: 20, level: 120, name: "Raiju", icon: "assets/img/bosses/cat-bolt.webp", combat: { type: "Melee Hybrid", hp: "30,000,000", atk: "40,002", matk: "20,001", def: 72, defFlat: 324, mdef: 72, mdefFlat: 342, hit: 270, flee: 210, atkSpeed: "0.70s", stats: { STR: 300, VIT: 240, AGI: 180, DEX: 300, INT: 300, LUK: 120 } }, def: "SPLIT", multi: true,
       elements: [["Wind", 58], ["Neutral", 37], ["Water", 5]], mix: { mel: 47, ran: 0, mag: 53 }, autoPct: 47, swings: 86,
       cc: [["Freeze", "10s", 100]], dot: [], deb: ["Water Exposure", "Blind"],
       prepare: "Split Wind/Neutral/Water* · +anti-Freeze", notes: "", drops: [], links: [] },
 
-    { floor: 25, level: 125, name: "Cactus King", icon: "assets/img/bosses/cactus-king.webp", def: "DEF", multi: false,
+    { floor: 25, level: 125, name: "Cactus King", icon: "assets/img/bosses/cactus-king.webp", combat: { type: "Melee Defender", hp: "53,000,000", atk: "51,966", matk: "12,658", def: 189, defFlat: 447, mdef: 39, mdefFlat: 297, hit: 250, flee: 156, atkSpeed: "0.93s", stats: { STR: 375, VIT: 438, AGI: 63, DEX: 250, INT: 125, LUK: 250 } }, def: "DEF", multi: false,
       elements: [["Neutral", 74], ["Earth", 20], ["Poison", 6]], mix: { mel: 70, ran: 4, mag: 26 }, autoPct: 40, swings: 57,
       cc: [["Stun", "3s", 75], ["Stun", "3s", 50]], dot: [["Poison", "10s"]],
       deb: ["Stagger", "Vulnerability", "Fire Exposure"],
       prepare: "DEF Neutral · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 30, level: 130, name: "Lady Fey", icon: "assets/img/bosses/sunflora-pixie.webp", def: "MDEF", multi: true,
+    { floor: 30, level: 130, name: "Lady Fey", icon: "assets/img/bosses/sunflora-pixie.webp", combat: { type: "Melee Caster", hp: "24,000,000", atk: "28,021", matk: "33,556", def: 0, defFlat: 273, mdef: 156, mdefFlat: 408, hit: 357, flee: 195, atkSpeed: "0.93s", stats: { STR: 130, VIT: 130, AGI: 130, DEX: 455, INT: 455, LUK: 260 } }, def: "MDEF", multi: true,
       elements: [["Neutral", 42], ["Earth", 38], ["Ghost", 20]], mix: { mel: 24, ran: 0, mag: 76 }, autoPct: 24, swings: 65,
       cc: [["Silence", "5s", 100], ["Silence", "5s", 100]], dot: [], deb: ["Slow", "Fire Exposure"],
       prepare: "MDEF Neutral/Earth/Ghost* · +anti-Silence", notes: "", drops: [], links: [] },
 
-    { floor: 35, level: 135, name: "Hermit King", icon: "assets/img/bosses/hermit-king.webp", def: "DEF", multi: false,
+    { floor: 35, level: 135, name: "Hermit King", icon: "assets/img/bosses/hermit-king.webp", combat: { type: "Melee Defender", hp: "66,000,000", atk: "64,671", matk: "15,253", def: 204, defFlat: 483, mdef: 42, mdefFlat: 321, hit: 270, flee: 169, atkSpeed: "0.93s", stats: { STR: 405, VIT: 473, AGI: 68, DEX: 270, INT: 135, LUK: 270 } }, def: "DEF", multi: false,
       elements: [["Neutral", 77], ["Water", 23]], mix: { mel: 77, ran: 0, mag: 23 }, autoPct: 30, swings: 55,
       cc: [["Freeze", "10s", 100], ["Freeze", "10s", 100]], dot: [], deb: ["Wind Exposure"],
       prepare: "DEF Neutral · +anti-Freeze", notes: "", drops: [], links: [] },
 
-    { floor: 35, level: 135, name: "Scorpion King", icon: "assets/img/bosses/scorpion-king.webp", def: "DEF", multi: false,
+    { floor: 35, level: 135, name: "Scorpion King", icon: "assets/img/bosses/scorpion-king.webp", combat: { type: "Melee Ravager", hp: "43,000,000", atk: "64,671", matk: "15,253", def: 81, defFlat: 363, mdef: 42, mdefFlat: 261, hit: 270, flee: 270, atkSpeed: "0.47s", stats: { STR: 405, VIT: 270, AGI: 270, DEX: 270, INT: 135, LUK: 270 } }, def: "DEF", multi: false,
       elements: [["Neutral", 80], ["Fire", 20]], mix: { mel: 75, ran: 0, mag: 25 }, autoPct: 57, swings: 125,
       cc: [["Stun", "3s", 75]], dot: [["Burn", "10s"], ["Bleed", "10s"]], deb: ["Earth Exposure"],
       prepare: "DEF Neutral · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 40, level: 140, name: "Naga", icon: "assets/img/bosses/snake-naga.webp", def: "DEF", multi: false,
+    { floor: 40, level: 140, name: "Naga", icon: "assets/img/bosses/snake-naga.webp", combat: { type: "Melee Ravager", hp: "47,000,000", atk: "72,040", matk: "16,744", def: 84, defFlat: 378, mdef: 42, mdefFlat: 273, hit: 280, flee: 280, atkSpeed: "0.47s", stats: { STR: 420, VIT: 280, AGI: 280, DEX: 280, INT: 140, LUK: 280 } }, def: "DEF", multi: false,
       elements: [["Neutral", 82], ["Ghost", 18]], mix: { mel: 47, ran: 27, mag: 25 }, autoPct: 47, swings: 124,
       cc: [["Silence", "5s", 100]], dot: [], deb: ["Blind"],
       prepare: "DEF Neutral · +anti-Silence", notes: "", drops: [], links: [] },
 
-    { floor: 40, level: 140, name: "Night Baron", icon: "assets/img/bosses/bat-lord.webp", def: "DEF", multi: false,
+    { floor: 40, level: 140, name: "Night Baron", icon: "assets/img/bosses/bat-lord.webp", combat: { type: "Melee Flyer", hp: "30,000,000", atk: "41,928", matk: "12,826", def: 42, defFlat: 294, mdef: 42, mdefFlat: 189, hit: 245, flee: 385, atkSpeed: "0.47s", stats: { STR: 210, VIT: 140, AGI: 490, DEX: 210, INT: 70, LUK: 140 } }, def: "DEF", multi: false,
       elements: [["Neutral", 86], ["Poison", 14]], mix: { mel: 77, ran: 9, mag: 14 }, autoPct: 60, swings: 124,
       cc: [], dot: [["Poison", "10s"]], deb: ["Blind"],
       prepare: "DEF Neutral", notes: "", drops: [], links: [] },
 
-    { floor: 45, level: 145, name: "Zombie Orc Lord", icon: "assets/img/bosses/zombie-goblin-lord.webp", def: "DEF", multi: false,
+    { floor: 45, level: 145, name: "Zombie Orc Lord", icon: "assets/img/bosses/zombie-goblin-lord.webp", combat: { type: "Melee Undead", hp: "72,000,000", atk: "106,377", matk: "28,156", def: 174, defFlat: 477, mdef: 0, mdefFlat: 411, hit: 290, flee: 181, atkSpeed: "1.40s", stats: { STR: 580, VIT: 435, AGI: 73, DEX: 290, INT: 290, LUK: 73 } }, def: "DEF", multi: false,
       elements: [["Neutral", 68], ["Holy", 14], ["Undead", 9], ["Shadow", 8]], mix: { mel: 68, ran: 0, mag: 32 }, autoPct: 12, swings: 33,
       cc: [["Stun", "3s", 75]], dot: [["Decay", "5s"]],
       deb: ["Vulnerability", "Magic Exposure", "Curse"],
       prepare: "DEF Neutral · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 45, level: 145, name: "Orc King", icon: "assets/img/bosses/goblin-king.webp", def: "DEF", multi: false,
+    { floor: 45, level: 145, name: "Orc King", icon: "assets/img/bosses/goblin-king.webp", combat: { type: "Melee Brute", hp: "72,000,000", atk: "92,239", matk: "13,900", def: 132, defFlat: 477, mdef: 45, mdefFlat: 279, hit: 290, flee: 254, atkSpeed: "0.70s", stats: { STR: 508, VIT: 435, AGI: 218, DEX: 290, INT: 73, LUK: 218 } }, def: "DEF", multi: false,
       elements: [["Neutral", 92], ["Earth", 8]], mix: { mel: 90, ran: 0, mag: 10 }, autoPct: 30, swings: 67,
       cc: [["Stun", "3s", 75], ["Stun", "3s", 50]], dot: [["Bleed", "10s"]],
       deb: ["Stagger", "Vulnerability", "Fire Exposure", "Slow"],
       prepare: "DEF Neutral · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 50, level: 150, name: "Ice Mage", icon: "assets/img/bosses/ice-mage.webp", def: "MDEF", multi: false,
+    { floor: 50, level: 150, name: "Ice Mage", icon: "assets/img/bosses/ice-mage.webp", combat: { type: "Melee Caster", hp: "36,000,000", atk: "39,770", matk: "51,132", def: 0, defFlat: 315, mdef: 180, mdefFlat: 471, hit: 412, flee: 225, atkSpeed: "0.93s", stats: { STR: 150, VIT: 150, AGI: 150, DEX: 525, INT: 525, LUK: 300 } }, def: "MDEF", multi: false,
       elements: [["Water", 63], ["Neutral", 20], ["Wind", 17]], mix: { mel: 20, ran: 3, mag: 77 }, autoPct: 20, swings: 64,
       cc: [["Freeze", "10s", 100], ["Freeze", "10s", 50], ["Freeze", "10s", 100], ["Freeze", "10s", 100]], dot: [],
       deb: ["Wind Exposure", "Water Exposure", "Vulnerability"],
       prepare: "MDEF Water · +anti-Freeze", notes: "", drops: [], links: [] },
 
-    { floor: 55, level: 155, name: "Seraphim Arbiter", icon: "assets/img/bosses/angel-mage.webp", def: "MDEF", multi: false,
+    { floor: 55, level: 155, name: "Seraphim Arbiter", icon: "assets/img/bosses/angel-mage.webp", combat: { type: "Melee Caster", hp: "39,000,000", atk: "42,953", matk: "56,522", def: 0, defFlat: 324, mdef: 186, mdefFlat: 483, hit: 426, flee: 232, atkSpeed: "0.93s", stats: { STR: 155, VIT: 155, AGI: 155, DEX: 543, INT: 543, LUK: 310 } }, def: "MDEF", multi: false,
       elements: [["Holy", 82], ["Neutral", 14], ["Shadow", 5]], mix: { mel: 14, ran: 0, mag: 86 }, autoPct: 14, swings: 65,
       cc: [["Stun", "1.5s", 25]], dot: [],
       deb: ["Blind", "Vulnerability", "Magic Exposure", "Curse"],
       prepare: "MDEF Holy · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 60, level: 160, name: "Broodmother", icon: "assets/img/bosses/queen-worm.webp", def: "SPLIT", multi: true,
+    { floor: 60, level: 160, name: "Broodmother", icon: "assets/img/bosses/queen-worm.webp", combat: { type: "Melee Undead", hp: "96,000,000", atk: "143,593", matk: "36,910", def: 192, defFlat: 528, mdef: 0, mdefFlat: 456, hit: 320, flee: 200, atkSpeed: "1.40s", stats: { STR: 640, VIT: 480, AGI: 80, DEX: 320, INT: 320, LUK: 80 } }, def: "SPLIT", multi: true,
       elements: [["Ghost", 48], ["Poison", 41], ["Neutral", 11]], mix: { mel: 11, ran: 35, mag: 54 }, autoPct: 11, swings: 37,
       cc: [], dot: [["Poison", "10s"]], deb: ["Slow", "Vulnerability", "Curse"],
       prepare: "Split Ghost/Poison/Neutral*", notes: "", drops: [], links: [] },
 
-    { floor: 60, level: 160, name: "Devourer", icon: "assets/img/bosses/worm-creep.webp", def: "DEF", multi: true,
+    { floor: 60, level: 160, name: "Devourer", icon: "assets/img/bosses/worm-creep.webp", combat: { type: "Melee Ravager", hp: "69,000,000", atk: "106,283", matk: "23,305", def: 96, defFlat: 432, mdef: 48, mdefFlat: 312, hit: 320, flee: 320, atkSpeed: "0.47s", stats: { STR: 480, VIT: 320, AGI: 320, DEX: 320, INT: 160, LUK: 320 } }, def: "DEF", multi: true,
       elements: [["Neutral", 42], ["Ghost", 35], ["Poison", 24]], mix: { mel: 42, ran: 18, mag: 40 }, autoPct: 35, swings: 124,
       cc: [], dot: [["Poison", "10s"]], deb: ["Slow", "Vulnerability", "Blind"],
       prepare: "DEF Neutral/Ghost/Poison*", notes: "", drops: [], links: [] },
 
-    { floor: 65, level: 165, name: "Demon Lord", icon: "assets/img/bosses/imp-devil.webp", def: "MDEF", multi: true,
+    { floor: 65, level: 165, name: "Demon Lord", icon: "assets/img/bosses/imp-devil.webp", combat: { type: "Melee Hybrid", hp: "75,000,000", atk: "97,605", matk: "48,802", def: 99, defFlat: 444, mdef: 99, mdefFlat: 468, hit: 371, flee: 289, atkSpeed: "0.70s", stats: { STR: 413, VIT: 330, AGI: 248, DEX: 413, INT: 413, LUK: 165 } }, def: "MDEF", multi: true,
       elements: [["Fire", 54], ["Neutral", 32], ["Ghost", 9], ["Shadow", 4]], mix: { mel: 30, ran: 9, mag: 61 }, autoPct: 30, swings: 86,
       cc: [["Stun", "3s", 100], ["Stun", "3s", 100]], dot: [["Burn", "10s"]],
       deb: ["Earth Exposure", "Curse"],
       prepare: "MDEF Fire/Neutral/Ghost* · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 70, level: 170, name: "Abyss Archon", icon: "assets/img/bosses/death-mage.webp", def: "MDEF", multi: true,
+    { floor: 70, level: 170, name: "Abyss Archon", icon: "assets/img/bosses/death-mage.webp", combat: { type: "Melee Caster", hp: "50,000,000", atk: "54,371", matk: "74,538", def: 0, defFlat: 357, mdef: 204, mdefFlat: 534, hit: 467, flee: 255, atkSpeed: "0.93s", stats: { STR: 170, VIT: 170, AGI: 170, DEX: 595, INT: 595, LUK: 340 } }, def: "MDEF", multi: true,
       elements: [["Shadow", 49], ["Neutral", 39], ["Ghost", 8], ["Holy", 3]], mix: { mel: 13, ran: 15, mag: 72 }, autoPct: 10, swings: 61,
       cc: [["Silence", "5s", 100]], dot: [], deb: ["Blind"],
       prepare: "MDEF Shadow/Neutral/Ghost* · +anti-Silence", notes: "", drops: [], links: [] },
 
-    { floor: 75, level: 175, name: "Orc Warchief", icon: "assets/img/bosses/goblin-warchief.webp", def: "SPLIT", multi: false,
+    { floor: 75, level: 175, name: "Orc Warchief", icon: "assets/img/bosses/goblin-warchief.webp", combat: { type: "Melee Hybrid", hp: "89,000,000", atk: "115,337", matk: "57,668", def: 105, defFlat: 471, mdef: 105, mdefFlat: 495, hit: 394, flee: 306, atkSpeed: "0.70s", stats: { STR: 438, VIT: 350, AGI: 263, DEX: 438, INT: 438, LUK: 175 } }, def: "SPLIT", multi: false,
       elements: [["Neutral", 64], ["Earth", 14], ["Wind", 13], ["Fire", 9]], mix: { mel: 59, ran: 0, mag: 41 }, autoPct: 23, swings: 78,
       cc: [["Stun", "3s", 50], ["Stun", "3s", 75], ["Stun", "3s", 100]], dot: [["Bleed", "10s"], ["Burn", "1s"]],
       deb: ["Blind", "Water Exposure", "Fire Exposure", "Earth Exposure"],
       prepare: "Split Neutral · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 80, level: 180, name: "Ice Titan", icon: "assets/img/bosses/mega-ice-golem.webp", def: "DEF", multi: true,
+    { floor: 80, level: 180, name: "Ice Titan", icon: "assets/img/bosses/mega-ice-golem.webp", combat: { type: "Melee Defender", hp: "150,000,000", atk: "150,876", matk: "31,375", def: 270, defFlat: 648, mdef: 54, mdefFlat: 432, hit: 360, flee: 225, atkSpeed: "0.93s", stats: { STR: 540, VIT: 630, AGI: 90, DEX: 360, INT: 180, LUK: 360 } }, def: "DEF", multi: true,
       elements: [["Neutral", 48], ["Water", 43], ["Earth", 8]], mix: { mel: 60, ran: 0, mag: 40 }, autoPct: 46, swings: 62,
       cc: [["Stun", "3s", 75], ["Freeze", "10s", 50], ["Stun", "3s", 50], ["Freeze", "10s", 100], ["Stun", "3s", 100]], dot: [],
       deb: ["Wind Exposure", "Slow", "Stagger", "Vulnerability", "Fire Exposure"],
       prepare: "DEF Neutral/Water/Earth* · +anti-Stun/Freeze", notes: "", drops: [], links: [] },
 
-    { floor: 85, level: 185, name: "Turtle Champion", icon: "assets/img/bosses/turtle-champion.webp", def: "SPLIT", multi: true,
+    { floor: 85, level: 185, name: "Turtle Champion", icon: "assets/img/bosses/turtle-champion.webp", combat: { type: "Melee Ravager", hp: "100,000,000", atk: "163,322", matk: "33,508", def: 111, defFlat: 498, mdef: 57, mdefFlat: 360, hit: 370, flee: 370, atkSpeed: "0.47s", stats: { STR: 555, VIT: 370, AGI: 370, DEX: 370, INT: 185, LUK: 370 } }, def: "SPLIT", multi: true,
       elements: [["Neutral", 44], ["Holy", 28], ["Water", 13], ["Earth", 8], ["Fire", 7]], mix: { mel: 53, ran: 0, mag: 47 }, autoPct: 53, swings: 129,
       cc: [["Stun", "3s", 50], ["Freeze", "10s", 100], ["Stun", "3s", 100]], dot: [["Burn", "10s"]],
       deb: ["Fire Exposure", "Slow"],
       prepare: "Split Neutral/Holy/Water* · +anti-Stun/Freeze", notes: "", drops: [], links: [] },
 
-    { floor: 85, level: 185, name: "Kraken", icon: "assets/img/bosses/kraken.webp", def: "SPLIT", multi: true,
+    { floor: 85, level: 185, name: "Kraken", icon: "assets/img/bosses/kraken.webp", combat: { type: "Melee Hybrid", hp: "100,000,000", atk: "136,163", matk: "68,081", def: 111, defFlat: 498, mdef: 111, mdefFlat: 525, hit: 416, flee: 324, atkSpeed: "0.70s", stats: { STR: 463, VIT: 370, AGI: 278, DEX: 463, INT: 463, LUK: 185 } }, def: "SPLIT", multi: true,
       elements: [["Neutral", 50], ["Water", 29], ["Earth", 17], ["Shadow", 3]], mix: { mel: 43, ran: 7, mag: 50 }, autoPct: 41, swings: 83,
       cc: [["Freeze", "10s", 50], ["Freeze", "10s", 100], ["Stun", "3s", 50], ["Freeze", "10s", 100]], dot: [],
       deb: ["Stagger", "Vulnerability", "Wind Exposure", "Fire Exposure", "Curse"],
       prepare: "Split Neutral/Water/Earth* · +anti-Freeze/Stun", notes: "", drops: [], links: [] },
 
-    { floor: 90, level: 190, name: "Cosmic Entity", icon: "assets/img/bosses/cosmic-entity.webp", def: "SPLIT", multi: true,
+    { floor: 90, level: 190, name: "Cosmic Entity", icon: "assets/img/bosses/cosmic-entity.webp", combat: { type: "Melee Hybrid", hp: "110,000,000", atk: "146,934", matk: "73,467", def: 114, defFlat: 513, mdef: 114, mdefFlat: 540, hit: 427, flee: 332, atkSpeed: "0.70s", stats: { STR: 475, VIT: 380, AGI: 285, DEX: 475, INT: 475, LUK: 190 } }, def: "SPLIT", multi: true,
       elements: [["Neutral", 47], ["Holy", 35], ["Shadow", 18]], mix: { mel: 16, ran: 29, mag: 55 }, autoPct: 16, swings: 80,
       cc: [["Silence", "5s", 100]], dot: [],
       deb: ["Vulnerability", "Magic Exposure", "Curse"],
       prepare: "Split Neutral/Holy/Shadow* · +anti-Silence", notes: "", drops: [], links: [] },
 
-    { floor: 90, level: 190, name: "Wraith King", icon: "assets/img/bosses/wraith.webp", def: "SPLIT", multi: false,
+    { floor: 90, level: 190, name: "Wraith King", icon: "assets/img/bosses/wraith.webp", combat: { type: "Melee Hybrid", hp: "110,000,000", atk: "146,934", matk: "73,467", def: 114, defFlat: 513, mdef: 114, mdefFlat: 540, hit: 427, flee: 332, atkSpeed: "0.70s", stats: { STR: 475, VIT: 380, AGI: 285, DEX: 475, INT: 475, LUK: 190 } }, def: "SPLIT", multi: false,
       elements: [["Neutral", 61], ["Undead", 35], ["Shadow", 4]], mix: { mel: 46, ran: 13, mag: 41 }, autoPct: 12, swings: 66,
       cc: [["Silence", "5s", 100]], dot: [["Decay", "5s"]],
       deb: ["Stagger", "Vulnerability", "Slow", "Undead Exposure", "Curse"],
       prepare: "Split Neutral · +anti-Silence", notes: "", drops: [], links: [] },
 
-    { floor: 95, level: 195, name: "Suphara", icon: "assets/img/bosses/spider-queen.webp", def: "DEF", multi: false,
+    { floor: 95, level: 195, name: "Suphara", icon: "assets/img/bosses/spider-queen.webp", combat: { type: "Melee Ravager", hp: "120,000,000", atk: "191,575", matk: "38,363", def: 117, defFlat: 525, mdef: 60, mdefFlat: 378, hit: 390, flee: 390, atkSpeed: "0.47s", stats: { STR: 585, VIT: 390, AGI: 390, DEX: 390, INT: 195, LUK: 390 } }, def: "DEF", multi: false,
       elements: [["Neutral", 69], ["Ghost", 24], ["Poison", 7]], mix: { mel: 24, ran: 49, mag: 27 }, autoPct: 24, swings: 122,
       cc: [["Silence", "1s", 100], ["Stun", "3s", 100]], dot: [["Poison", "10s"]],
       deb: ["Vulnerability", "Slow", "Blind"],
       prepare: "DEF Neutral · +anti-Silence/Stun", notes: "", drops: [], links: [] },
 
-    { floor: 95, level: 195, name: "Robot Dragon", icon: "assets/img/bosses/robot-dragon.webp", def: "DEF", multi: false,
+    { floor: 95, level: 195, name: "Robot Dragon", icon: "assets/img/bosses/robot-dragon.webp", combat: { type: "Melee Hybrid", hp: "120,000,000", atk: "158,506", matk: "79,253", def: 117, defFlat: 525, mdef: 117, mdefFlat: 552, hit: 439, flee: 341, atkSpeed: "0.70s", stats: { STR: 488, VIT: 390, AGI: 293, DEX: 488, INT: 488, LUK: 195 } }, def: "DEF", multi: false,
       elements: [["Neutral", 64], ["Fire", 36]], mix: { mel: 47, ran: 29, mag: 23 }, autoPct: 22, swings: 80,
       cc: [["Stun", "3s", 100], ["Stun", "3s", 75], ["Stun", "3s", 100]], dot: [["Burn", "10s"], ["Bleed", "10s"]],
       deb: ["Earth Exposure"],
       prepare: "DEF Neutral · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 101, level: 201, name: "Echo Paladin Master", icon: null, def: "MDEF", multi: false,
+    { floor: 101, level: 201, name: "Echo Paladin Master", icon: null, combat: { type: "Melee Defender", hp: "210,000,000", atk: "210,393", matk: "41,630", def: 303, defFlat: 720, mdef: 60, mdefFlat: 480, hit: 402, flee: 251, atkSpeed: "0.93s", stats: { STR: 603, VIT: 704, AGI: 101, DEX: 402, INT: 201, LUK: 402 } }, def: "MDEF", multi: false,
       elements: [["Holy", 90], ["Neutral", 10]], mix: { mel: 10, ran: 0, mag: 90 }, autoPct: 6, swings: 58,
       cc: [], dot: [], deb: ["Stagger", "Vulnerability"],
       prepare: "MDEF Holy", notes: "", drops: [], links: [] },
 
-    { floor: 101, level: 201, name: "Echo Gunslinger Master", icon: null, def: "DEF", multi: false,
+    { floor: 101, level: 201, name: "Echo Gunslinger Master", icon: null, combat: { type: "Melee Archer", hp: "100,000,000", atk: "110,641", matk: "29,729", def: 60, defFlat: 480, mdef: 120, mdefFlat: 300, hit: 553, flee: 452, atkSpeed: "1.40s", stats: { STR: 302, VIT: 302, AGI: 503, DEX: 704, INT: 101, LUK: 503 } }, def: "DEF", multi: false,
       elements: [["Neutral", 100]], mix: { mel: 2, ran: 98, mag: 0 }, autoPct: 2, swings: 9,
       cc: [], dot: [], deb: ["Vulnerability", "Weaken", "Marked", "Slow"],
       prepare: "DEF Neutral", notes: "", drops: [], links: [] },
 
-    { floor: 101, level: 201, name: "Echo Wizard Master", icon: null, def: "MDEF", multi: true,
+    { floor: 101, level: 201, name: "Echo Wizard Master", icon: null, combat: { type: "Melee Caster", hp: "78,000,000", atk: "83,368", matk: "125,112", def: 0, defFlat: 420, mdef: 240, mdefFlat: 630, hit: 553, flee: 301, atkSpeed: "0.93s", stats: { STR: 201, VIT: 201, AGI: 201, DEX: 704, INT: 704, LUK: 402 } }, def: "MDEF", multi: true,
       elements: [["Water", 26], ["Wind", 24], ["Fire", 18], ["Earth", 15], ["Neutral", 13], ["Ghost", 5]], mix: { mel: 13, ran: 0, mag: 87 }, autoPct: 13, swings: 65,
       cc: [["Stun", "3s", 100], ["Freeze", "10s", 50], ["Stun", "3s", 50]], dot: [["Burn", "10s"]],
       deb: ["Wind Exposure", "Blind", "Water Exposure", "Earth Exposure", "Fire Exposure"],
       prepare: "MDEF Water/Wind/Fire* · +anti-Stun/Freeze", notes: "", drops: [], links: [] },
 
-    { floor: 101, level: 201, name: "Echo Priest Master", icon: null, def: "MDEF", multi: false,
+    { floor: 101, level: 201, name: "Echo Priest Master", icon: null, combat: { type: "Melee Caster", hp: "78,000,000", atk: "83,368", matk: "125,112", def: 0, defFlat: 420, mdef: 240, mdefFlat: 630, hit: 553, flee: 301, atkSpeed: "0.93s", stats: { STR: 201, VIT: 201, AGI: 201, DEX: 704, INT: 704, LUK: 402 } }, def: "MDEF", multi: false,
       elements: [["Holy", 73], ["Neutral", 27]], mix: { mel: 27, ran: 0, mag: 73 }, autoPct: 27, swings: 65,
       cc: [["Silence", "5s", 100], ["Stun", "1s", 13]], dot: [], deb: ["Magic Exposure"],
       prepare: "MDEF Holy · +anti-Silence/Stun", notes: "", drops: [], links: [] },
 
-    { floor: 101, level: 201, name: "Echo Shinobi Master", icon: null, def: "DEF", multi: false,
+    { floor: 101, level: 201, name: "Echo Shinobi Master", icon: null, combat: { type: "Melee Hybrid", hp: "130,000,000", atk: "174,022", matk: "87,011", def: 120, defFlat: 540, mdef: 120, mdefFlat: 570, hit: 452, flee: 352, atkSpeed: "0.70s", stats: { STR: 503, VIT: 402, AGI: 302, DEX: 503, INT: 503, LUK: 201 } }, def: "DEF", multi: false,
       elements: [["Neutral", 100]], mix: { mel: 31, ran: 54, mag: 14 }, autoPct: 9, swings: 68,
       cc: [["Stun", "3s", 100], ["Freeze", "10s", 100]], dot: [["Burn", "10s"]], deb: ["Blind"],
       prepare: "DEF Neutral · +anti-Stun/Freeze", notes: "", drops: [], links: [] },
 
-    { floor: 101, level: 201, name: "Echo Necromancer Master", icon: null, def: "SPLIT", multi: true,
+    { floor: 101, level: 201, name: "Echo Necromancer Master", icon: null, combat: { type: "Melee Undead", hp: "180,000,000", atk: "292,430", matk: "70,244", def: 240, defFlat: 660, mdef: 0, mdefFlat: 570, hit: 402, flee: 251, atkSpeed: "1.40s", stats: { STR: 804, VIT: 603, AGI: 101, DEX: 402, INT: 402, LUK: 101 } }, def: "SPLIT", multi: true,
       elements: [["Neutral", 53], ["Undead", 47]], mix: { mel: 53, ran: 0, mag: 47 }, autoPct: 5, swings: 28,
       cc: [], dot: [["Decay", "10s"]],
       deb: ["Stagger", "Vulnerability", "Undead Exposure", "Slow"],
       prepare: "Split Neutral/Undead*", notes: "", drops: [], links: [] },
 
-    { floor: 101, level: 201, name: "Echo Berserker Master", icon: null, def: "DEF", multi: false,
+    { floor: 101, level: 201, name: "Echo Berserker Master", icon: null, combat: { type: "Melee Ravager", hp: "130,000,000", atk: "210,393", matk: "41,630", def: 120, defFlat: 540, mdef: 60, mdefFlat: 390, hit: 402, flee: 402, atkSpeed: "0.47s", stats: { STR: 603, VIT: 402, AGI: 402, DEX: 402, INT: 201, LUK: 402 } }, def: "DEF", multi: false,
       elements: [["Neutral", 100]], mix: { mel: 100, ran: 0, mag: 0 }, autoPct: 13, swings: 91,
       cc: [["Stun", "3s", 75], ["Stun", "3s", 100]], dot: [["Bleed", "5s"]], deb: ["Stagger", "Slow"],
       prepare: "DEF Neutral · +anti-Stun", notes: "", drops: [], links: [] },
 
-    { floor: 101, level: 201, name: "Echo Weaver Master", icon: null, def: "SPLIT", multi: true,
+    { floor: 101, level: 201, name: "Echo Weaver Master", icon: null, combat: { type: "Melee Hybrid", hp: "130,000,000", atk: "174,022", matk: "87,011", def: 120, defFlat: 540, mdef: 120, mdefFlat: 570, hit: 452, flee: 352, atkSpeed: "0.70s", stats: { STR: 503, VIT: 402, AGI: 302, DEX: 503, INT: 503, LUK: 201 } }, def: "SPLIT", multi: true,
       elements: [["Neutral", 44], ["Fire", 19], ["Ghost", 17], ["Wind", 10], ["Water", 7], ["Earth", 4]], mix: { mel: 40, ran: 4, mag: 56 }, autoPct: 25, swings: 77,
       cc: [["Freeze", "10s", 100]], dot: [["Burn", "10s"]],
       deb: ["Wind Exposure", "Earth Exposure", "Water Exposure", "Slow", "Fire Exposure"],
