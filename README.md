@@ -54,6 +54,15 @@ assets/js/app.js      renders floors from the data + the hover tooltip
 data/bosses.js        the boss data (a plain script, not fetched JSON)
 ```
 
+## After every deploy: bump the cache-buster
+
+`index.html` loads `style.css`, `bosses.js` and `app.js` with a `?v=YYYYMMDDNN`
+query string. GitHub Pages serves everything with `Cache-Control: max-age=600`,
+so without this, a visitor whose browser already cached those files won't see
+a change for up to 10 minutes even after the page itself reloads - bump the
+version string in `index.html` (all three tags, same value) on any commit
+that changes `style.css`, `app.js`, or `bosses.js`.
+
 ## Editing the data
 
 `data/bosses.js` assigns `window.SPIRE_DATA`. It's loaded with a `<script>` tag rather than
