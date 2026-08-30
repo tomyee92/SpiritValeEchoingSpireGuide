@@ -94,14 +94,6 @@ h1 {
   letter-spacing: .02em; color: var(--ink);
 }
 
-.lede { margin: 0 0 18px; max-width: 60ch; font-size: 18px; color: var(--ink-2); }
-.lede strong { color: var(--ink); font-weight: 600; }
-
-.disclaimer {
-  margin: 0; max-width: 68ch; font-size: 13.5px; line-height: 1.55; color: var(--ink-3);
-  border-left: 2px solid var(--line); padding-left: 14px;
-}
-
 /* ---------- badges ---------- */
 
 .pill {

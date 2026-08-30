@@ -199,7 +199,6 @@
   }).join("");
 
   /* meta blocks */
-  $("#build").textContent = DATA.meta.gameBuild;
   $("#src").href = DATA.meta.source;
 
   /* ---------- tooltip behaviour (shared by both target types) ---------- */
