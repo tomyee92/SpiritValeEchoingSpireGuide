@@ -102,40 +102,47 @@
       '" data-tip-body="' + esc(body) + '">' + esc(label) + "</button>";
   }
 
-  /* ---------- full combat card (hover the icon/name area) ---------- */
+  /* ---------- always-visible stat bars, right side of the row ---------- */
 
-  function elementBar(b) {
-    var bar = b.elements.map(function (e) {
-      return '<span style="width:' + e[1] + '%;background:var(--el-' + e[0] + ',var(--ink-3))"></span>';
-    }).join("");
-    var legend = b.elements.map(function (e) {
-      return '<i style="--sw:var(--el-' + e[0] + ',var(--ink-3))">' + esc(e[0]) + " " + e[1] + "</i>";
-    }).join("");
-    return '<div class="tip-sec"><h4>Element</h4><div class="bar">' + bar +
-      '</div><div class="legend">' + legend + "</div></div>";
-  }
-
-  function mixBar(b) {
-    var parts = [
+  function mixBarParts(b) {
+    return [
       ["Mel", b.mix.mel, "var(--def)"],
       ["Ran", b.mix.ran, "var(--def)"],
       ["Mag", b.mix.mag, "var(--mdef)"]
     ].filter(function (p) { return p[1] > 0; });
+  }
 
-    var bar = parts.map(function (p) {
+  function mixBarSpans(parts) {
+    return parts.map(function (p) {
       return '<span style="width:' + p[1] + "%;background:" + p[2] +
         (p[0] === "Ran" ? ";opacity:.6" : "") + '"></span>';
     }).join("");
-    var legend = parts.map(function (p) {
-      return '<i style="--sw:' + p[2] + '">' + p[0] + " " + p[1] + "</i>";
-    }).join("");
-
-    var phys = b.mix.mel + b.mix.ran;
-    var call = phys > b.mix.mag ? phys + "% blocked by DEF" : b.mix.mag + "% blocked by MDEF";
-
-    return '<div class="tip-sec"><h4>Damage type · ' + call + '</h4><div class="bar">' + bar +
-      '</div><div class="legend">' + legend + "</div></div>";
   }
+
+  function elementBarSpans(elements) {
+    return elements.map(function (e) {
+      return '<span style="width:' + e[1] + '%;background:var(--el-' + e[0] + ',var(--ink-3))"></span>';
+    }).join("");
+  }
+
+  function rowStatsHTML(b) {
+    var phys = b.mix.mel + b.mix.ran;
+    var dmgCaption = (phys > b.mix.mag ? phys + "% DEF" : b.mix.mag + "% MDEF");
+    var elCaption = b.elements.map(function (e) { return e[0] + " " + e[1]; }).join(" · ");
+
+    return '<div class="b-stats">' +
+        '<div class="stat"><div class="stat-top"><span class="stat-label">Element</span>' +
+          '<span class="stat-cap">' + esc(elCaption) + '</span></div>' +
+          '<div class="bar mini-bar">' + elementBarSpans(b.elements) + "</div></div>" +
+        '<div class="stat"><div class="stat-top"><span class="stat-label">Damage</span>' +
+          '<span class="stat-cap">' + esc(dmgCaption) + '</span></div>' +
+          '<div class="bar mini-bar">' + mixBarSpans(mixBarParts(b)) + "</div></div>" +
+      "</div>";
+  }
+
+  /* ---------- full combat card (hover the icon/name area) ---------- */
+  /* Element and damage-type already sit on the row itself now - this only
+     carries what wouldn't fit there: attack pacing, gear prep, notes. */
 
   function fullCardHTML(b) {
     var pace = '<div class="tip-sec"><h4>Attack pattern</h4><ul>' +
@@ -152,7 +159,7 @@
         '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
         '<span class="lv">F' + b.floor + " · LV " + b.level + "</span></div>" +
       "</div>" +
-      mixBar(b) + elementBar(b) + pace +
+      pace +
       '<div class="tip-sec"><p class="prepare">Prepare: ' + esc(b.prepare) +
         (b.multi ? "<em>* Element spread is too wide to fully resist — lean on raw mitigation instead of chasing a resist set.</em>" : "") +
       "</p>" + notes + "</div>";
@@ -173,21 +180,25 @@
     f.bosses.push(b);
   });
 
-  // One block per boss, in climb order: F5 › boss › swap call, then its
-  // status tags on the line below. A floor with two bosses repeats its
-  // number, so every block stands on its own.
+  // One block per boss, in climb order: F5 › boss › swap call, its status
+  // tags below that, and element/damage-type bars filling the space to the
+  // right - all visible without hovering. A floor with two bosses repeats
+  // its number, so every block stands on its own.
   $("#list").innerHTML = floors.map(function (f) {
     return f.bosses.map(function (b, j) {
       return '<div class="boss' + (j === 0 ? " is-newfloor" : "") + '" data-def="' + b.def + '"' +
           (j === 0 ? ' id="floor-' + f.floor + '"' : "") + '>' +
-        '<button type="button" class="b-main" data-i="' + b._i + '" aria-describedby="tip">' +
-          '<span class="f-tag">F' + f.floor + "</span>" +
-          iconHTML(b, "row-icon", 48) +
-          '<span class="b-name">' + esc(b.name) + "</span>" +
-          '<span class="b-lv">LV ' + b.level + "</span>" +
-          '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
-        "</button>" +
-        '<div class="b-tags">' + ccTags(b) + "</div>" +
+        '<div class="b-body">' +
+          '<button type="button" class="b-main" data-i="' + b._i + '" aria-describedby="tip">' +
+            '<span class="f-tag">F' + f.floor + "</span>" +
+            iconHTML(b, "row-icon", 48) +
+            '<span class="b-name">' + esc(b.name) + "</span>" +
+            '<span class="b-lv">LV ' + b.level + "</span>" +
+            '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
+          "</button>" +
+          '<div class="b-tags">' + ccTags(b) + "</div>" +
+        "</div>" +
+        rowStatsHTML(b) +
       "</div>";
     }).join("");
   }).join("");

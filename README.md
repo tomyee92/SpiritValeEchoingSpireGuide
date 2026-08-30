@@ -8,13 +8,19 @@ organized the way you actually climb: **one line per boss, in climb order** — 
 then F15, straight down the tower. A floor with two bosses repeats its number so every line
 stands on its own.
 
-Each boss block has two independent hover/tap targets:
+Each boss block shows everything at a glance, no hovering required:
 
-- **Icon + name + level + DEF/MDEF pill** — point at this for the full combat card
-  (damage-type split, element resist, attack pacing, the gear-prep line).
+- **DEF/MDEF/SPLIT**, element split, and damage-type split (Melee+Ranged vs Magic) —
+  the element and damage bars sit to the right of the row (below it on narrower
+  screens), sized like the source guide's compact tags, not oversized badges.
 - **Every status tag** (Silence, Freeze, Stun, Curse, every debuff and DoT) is
-  **always visible on the row, never hidden** — point at any one tag for a small
-  tooltip with its exact duration/chance and what it does to you.
+  always visible right under the name.
+
+Two things still need a point/tap:
+
+- **Any status tag** — its exact duration/chance and what it does to you.
+- **Icon + name + level + DEF/MDEF pill** — the deeper combat card: attack
+  pacing and the gear-prep line (the only things that didn't fit on the row).
 
 Tap does the same on touch; keyboard focus works on both target types too.
 
