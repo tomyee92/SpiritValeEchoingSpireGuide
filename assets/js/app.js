@@ -100,22 +100,7 @@
       '" data-tip-body="' + esc(body) + '">' + esc(label) + "</button>";
   }
 
-  /* ---------- always-visible stat bars, right side of the row ---------- */
-
-  function mixBarParts(b) {
-    return [
-      ["Mel", b.mix.mel, "var(--def)"],
-      ["Ran", b.mix.ran, "var(--def)"],
-      ["Mag", b.mix.mag, "var(--mdef)"]
-    ].filter(function (p) { return p[1] > 0; });
-  }
-
-  function mixBarSpans(parts) {
-    return parts.map(function (p) {
-      return '<span style="width:' + p[1] + "%;background:" + p[2] +
-        (p[0] === "Ran" ? ";opacity:.6" : "") + '"></span>';
-    }).join("");
-  }
+  /* ---------- always-visible skill/element info, middle-bottom ---------- */
 
   // One chip per element: its own icon (self-hosted, same set the source
   // site uses) plus its damage-share number - not a single blended bar,
@@ -124,6 +109,21 @@
     return elements.map(function (e) {
       return '<span class="el-chip"><img class="el-icon" src="assets/img/elements/' + esc(e[0]) +
         '.webp" alt="" width="14" height="14" loading="lazy">' + e[1] + "</span>";
+    }).join("");
+  }
+
+  // Every skill the boss actually casts, scraped from its monster page, each
+  // tagged with the skill's own element (from the skill's own page) - this is
+  // what actually predicts what element you'll get hit by next, not a single
+  // "X% auto-attack" composite that told you nothing you could act on.
+  function skillChips(b) {
+    return b.skills.map(function (sk) {
+      var title = sk.name + (sk.lv ? " · Lv " + sk.lv : "");
+      var effects = sk.applies.length ? sk.applies.join(", ") : "No status effect.";
+      var body = sk.element + " " + sk.dmgType + " skill. " + effects;
+      return '<button type="button" class="tag-hot tag skill-chip" style="--el:var(--el-' + esc(sk.element) +
+        ',var(--ink-3))" data-tip-title="' + esc(title) + '" data-tip-body="' + esc(body) + '">' +
+        esc(sk.name) + "</button>";
     }).join("");
   }
 
@@ -159,15 +159,11 @@
   // Three zones per boss row:
   //   left:          icon, floor tag, name
   //   middle-top:    type, level, DEF/MDEF, combat stats, status tags
-  //   middle-bottom: element, damage-type split
+  //   middle-bottom: element, and every skill the boss casts (own element each)
   //   right:         Prepare - and where future notes/tips go
   // A floor with two bosses repeats its number, so every block stands alone.
   $("#list").innerHTML = floors.map(function (f) {
     return f.bosses.map(function (b, j) {
-      var phys = b.mix.mel + b.mix.ran;
-      var dmgCaption = (phys > b.mix.mag ? phys + "% DEF" : b.mix.mag + "% MDEF") +
-        " · " + b.autoPct + "% auto";
-
       return '<div class="boss' + (j === 0 ? " is-newfloor" : "") + '" data-def="' + b.def + '"' +
           (j === 0 ? ' id="floor-' + f.floor + '"' : "") + '>' +
 
@@ -190,9 +186,8 @@
           '<div class="b-mid-bottom">' +
             '<div class="stat"><span class="stat-label">Element</span>' +
               '<div class="el-chips">' + elementChips(b.elements) + "</div></div>" +
-            '<div class="stat"><div class="stat-top"><span class="stat-label">Damage</span>' +
-              '<span class="stat-cap">' + esc(dmgCaption) + '</span></div>' +
-              '<div class="bar mini-bar">' + mixBarSpans(mixBarParts(b)) + "</div></div>" +
+            '<div class="stat"><span class="stat-label">Skills</span>' +
+              '<div class="skill-chips">' + skillChips(b) + "</div></div>" +
           "</div>" +
         "</div>" +
 

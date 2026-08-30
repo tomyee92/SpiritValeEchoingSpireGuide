@@ -136,8 +136,7 @@ h1 {
 .boss {
   /* min-width:0 because .boss is itself a grid item of .sheet: grid/flex
      items default to min-width:auto (content's min-content), which lets a
-     wide nested box force this whole row past its own grid track. Same
-     fix needed one level up from the .stat-cap issue below. */
+     wide nested box force this whole row past its own grid track. */
   min-width: 0;
   border-radius: 11px;
   background: var(--panel); border: 1px solid var(--line-soft);
@@ -214,6 +213,7 @@ h1 {
 
 .b-mid-bottom { display: flex; flex-wrap: wrap; gap: 20px; }
 .b-mid-bottom .stat { flex: 1 1 200px; min-width: 160px; }
+.b-mid-bottom .stat:has(.skill-chips) { flex: 3 1 320px; }
 
 /* ---------- right zone: Prepare, and future notes/tips ---------- */
 
@@ -274,23 +274,16 @@ h1 {
   text-transform: uppercase; color: var(--ink-3);
 }
 
-.stat-top {
-  display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
-  margin-bottom: 4px; min-width: 0;
-}
 .stat-label {
   font: 600 9.5px/1 "IBM Plex Mono", monospace; letter-spacing: .1em;
   text-transform: uppercase; color: var(--ink-3); flex: none;
 }
-.stat-cap {
-  /* wraps rather than truncates: white-space:nowrap here would give the text
-     a hard min-content width, which forces every ancestor flex/grid box
-     wider than intended (that's what caused the mobile overflow) */
-  min-width: 0; flex: 1 1 auto;
-  font: 500 11px/1.2 "IBM Plex Mono", monospace; color: var(--ink-2);
-  text-align: right;
-}
-.mini-bar { height: 7px; margin-bottom: 0; }
+
+/* every skill the boss casts, each accented with its own element - the
+   thing that actually predicts what element you'll get hit by next,
+   replacing the old "X% auto-attack" composite that wasn't actionable */
+.skill-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.skill-chip { border-left: 3px solid var(--el, var(--ink-3)); padding-left: 6px; }
 
 .stat-prep-text {
   display: block; margin-top: 4px;
@@ -322,12 +315,6 @@ h1 {
   margin: 0 0 5px; font-size: 13.5px; font-weight: 600; color: var(--ink);
 }
 .tip-mini p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--ink-2); }
-
-.bar {
-  display: flex; height: 9px; border-radius: 5px; overflow: hidden;
-  background: var(--bg-2); margin-bottom: 7px;
-}
-.bar span { display: block; height: 100%; }
 
 /* ---------- footer ---------- */
 
