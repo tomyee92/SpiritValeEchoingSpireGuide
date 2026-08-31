@@ -27,9 +27,16 @@ explainer** — its exact duration/chance and what it does to you (e.g. what
 "Curse" actually means). Tap does the same on touch; keyboard focus works too.
 
 A boss that reflects damage back at you gets a highlighted warning in its
-right-side zone (currently: Ice Mage, Lady Fey, Naga, Seraphim Arbiter, all
-via "Spell Shield" - +50% Magic reflect for 10s, confirmed against the
-skill's own effect page, not guessed from its name).
+right-side zone. Confirmed against each skill's own effect page, not
+guessed from a skill's name:
+
+- Ice Mage, Lady Fey, Naga, Seraphim Arbiter - "Spell Shield", +50% Magic
+  reflect for 10s.
+- Cactus King - "Thorns", +20% Physical reflect for 10s.
+
+Other similarly-named skills (Reinforce/"Steel Guard", High Guard) were
+checked and are block/immobility buffs, not reflect - they don't get the
+warning.
 
 The climb list itself runs nearly full-width — there's a lot of data per row
 now and the narrower centered column from earlier passes wasted the screen.
@@ -61,12 +68,11 @@ data/bosses.js        the boss data (a plain script, not fetched JSON)
 
 ## Design
 
-A dark "night ascent" theme instead of a light paper look that read too close to the
-source wiki's own light UI. Palette: near-black void background, bone-white text,
-one signature accent (echo-cyan) for magic/MDEF, plus ember-orange (physical/DEF) and
-arcane-violet (mixed/SPLIT). Display type is Cinzel (carved-stone, temple-inscription
-feel) for the title; IBM Plex Mono stays for all the dense data, which was never the
-part that read as copied.
+A light "sunlit stone" theme - not a dark void (reverted per feedback), and not the
+generic warm-cream default either: cool limestone background, a violet signature accent,
+ember-orange for physical/DEF, deep blue for magic/MDEF, violet for mixed/SPLIT. Display
+type is Cinzel (carved-stone, temple-inscription feel) for the title; IBM Plex Mono stays
+for all the dense data, which was never the part that read as copied.
 
 The signature element: each row leads with a **floor badge** - a ringed token colored
 by DEF/MDEF/SPLIT, whose glow brightens the higher the floor (`--depth`, 0 at floor 5
