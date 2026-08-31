@@ -59,6 +59,20 @@ assets/js/app.js      renders floors from the data + the hover tooltip
 data/bosses.js        the boss data (a plain script, not fetched JSON)
 ```
 
+## Design
+
+A dark "night ascent" theme instead of a light paper look that read too close to the
+source wiki's own light UI. Palette: near-black void background, bone-white text,
+one signature accent (echo-cyan) for magic/MDEF, plus ember-orange (physical/DEF) and
+arcane-violet (mixed/SPLIT). Display type is Cinzel (carved-stone, temple-inscription
+feel) for the title; IBM Plex Mono stays for all the dense data, which was never the
+part that read as copied.
+
+The signature element: each row leads with a **floor badge** - a ringed token colored
+by DEF/MDEF/SPLIT, whose glow brightens the higher the floor (`--depth`, 0 at floor 5
+to 1 at floor 101) - visualizing rising danger as you scroll down the tower, and
+literally an "echo" ping rather than a plain "F5" label.
+
 ## After every deploy: bump the cache-buster
 
 `index.html` loads `style.css`, `bosses.js` and `app.js` with a `?v=YYYYMMDDNN`

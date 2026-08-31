@@ -170,7 +170,9 @@
           (j === 0 ? ' id="floor-' + f.floor + '"' : "") + '>' +
 
         '<div class="b-id">' +
-          '<span class="f-tag">F' + f.floor + "</span>" +
+          '<span class="floor-badge" style="--depth:' + ((f.floor - 5) / 96).toFixed(2) + '">' +
+            '<b>' + f.floor + "</b>" +
+          "</span>" +
           iconHTML(b, "row-icon", 48) +
           '<span class="b-name">' + esc(b.name) + "</span>" +
         "</div>" +

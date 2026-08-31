@@ -1,44 +1,47 @@
-/* The Echoing Spire climb sheet — light "paper" theme.
-   Everything about a boss lives on its row; only a single status tag's own
-   explainer is still behind a point/tap tooltip. */
+/* The Echoing Spire climb sheet.
+   Design: a night ascent through a resonant tower. Dark void, one signature
+   accent (echo-cyan), and a carved-stone display face for the title. The
+   floor badge - a ringed token that glows brighter the higher you climb -
+   is the one thing this page should be remembered by. Everything about a
+   boss lives on its row; only a single status tag's own explainer is still
+   behind a point/tap tooltip. */
 
 :root {
-  --bg:        #f6f4ef;   /* warm paper */
-  --bg-2:      #efece4;
-  --panel:     #ffffff;
-  --panel-2:   #faf8f4;
-  --line:      #d8d3c8;
-  --line-soft: #e7e2d7;
+  --void:      #0a0d13;   /* page background - tower interior at night */
+  --void-2:    #12151e;   /* row panel */
+  --void-3:    #191d29;   /* chip / recessed surface */
+  --mist:      #262c3b;   /* hairlines, borders */
+  --mist-2:    #333a4d;
 
-  --ink:       #1b1a17;
-  --ink-2:     #55514a;
-  --ink-3:     #8b857a;
+  --bone:      #ece8dc;   /* primary text - carved stone */
+  --bone-dim:  #9299ab;   /* secondary text */
+  --bone-faint:#5b6274;   /* tertiary / labels */
 
-  --accent:    #5a45cf;
+  --echo:      #55d8ff;   /* signature accent - sonar/magic cyan */
+  --echo-dim:  rgba(85,216,255,.22);
 
-  --def:       #a85400;   /* physical / DEF */
-  --mdef:      #0a5fbf;   /* magic / MDEF   */
-  --split:     #7a35ab;   /* mixed          */
+  --ember:     #ff8a52;   /* physical / DEF */
+  --mdef:      #55d8ff;   /* magic / MDEF - reuses the signature accent */
+  --split:     #c48bff;   /* mixed */
 
-  --silence:   #8a6600;
-  --freeze:    #06718f;
-  --stun:      #ad4517;
-  --curse:     #b81f42;
+  --silence:   #e0b74a;
+  --freeze:    #4fd0e8;
+  --stun:      #ff6b4d;
+  --curse:     #ff4f7e;
 
-  --el-Neutral: #6b6f7a;
-  --el-Wind:    #0d7f5f;
-  --el-Water:   #0a5fbf;
-  --el-Fire:    #c4430f;
-  --el-Earth:   #8a6524;
-  --el-Poison:  #5a8a0c;
-  --el-Ghost:   #743fb0;
-  --el-Holy:    #96700a;
-  --el-Shadow:  #4b3f7a;
-  --el-Undead:  #44743a;
+  --el-Neutral: #9aa1b5;
+  --el-Wind:    #3fd6a3;
+  --el-Water:   #4fb4ff;
+  --el-Fire:    #ff7a4d;
+  --el-Earth:   #d1a05a;
+  --el-Poison:  #9fe14f;
+  --el-Ghost:   #b98bff;
+  --el-Holy:    #ffd873;
+  --el-Shadow:  #8a7cff;
+  --el-Undead:  #7fd67a;
 
   --radius: 12px;
   --wrap: 1080px;
-  --shadow: 0 1px 2px rgba(30,25,15,.05), 0 6px 18px rgba(30,25,15,.06);
 }
 
 * { box-sizing: border-box; }
@@ -47,8 +50,8 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--ink);
+  background: var(--void);
+  color: var(--bone);
   font: 400 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -56,7 +59,7 @@ body {
 .wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: 20px; }
 
 /* the climb list itself: wide, minimal side margins - there's a lot of
-   combat data on each row now and the narrower .wrap wasted the screen */
+   combat data on each row now and a narrower column wastes the screen */
 .wrap-wide { width: 100%; max-width: 1680px; margin-inline: auto; padding-inline: 14px; }
 
 .sr-only {
@@ -65,125 +68,150 @@ body {
 }
 
 .skip {
-  position: absolute; left: -9999px; top: 0; background: var(--accent);
-  color: #fff; padding: 10px 16px; z-index: 100;
+  position: absolute; left: -9999px; top: 0; background: var(--echo);
+  color: #04141a; padding: 10px 16px; z-index: 100; font-weight: 700;
 }
 .skip:focus { left: 12px; top: 12px; }
 
-a { color: #4a37b8; }
+a { color: var(--echo); }
 
-/* ---------- masthead ---------- */
+/* ---------- masthead: the tower at night, one pulse of light ---------- */
 
 .masthead {
-  padding: 62px 0 40px;
-  background:
-    radial-gradient(760px 320px at 50% -60px, rgba(90,69,207,.10), transparent 70%),
-    linear-gradient(180deg, #fffdf8, var(--bg));
-  border-bottom: 1px solid var(--line-soft);
+  position: relative; overflow: hidden;
+  padding: 84px 0 52px;
+  background: var(--void);
+  border-bottom: 1px solid var(--mist);
 }
 
+.masthead-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(560px 420px at 18% -10%, var(--echo-dim), transparent 65%),
+    radial-gradient(900px 300px at 85% 10%, rgba(196,139,255,.10), transparent 70%);
+}
+
+.masthead .wrap { position: relative; }
+
 .eyebrow {
-  margin: 0 0 10px;
-  font: 600 12px/1 "IBM Plex Mono", ui-monospace, monospace;
-  letter-spacing: .22em; text-transform: uppercase; color: var(--accent);
+  margin: 0 0 18px;
+  font: 600 11px/1 "IBM Plex Mono", ui-monospace, monospace;
+  letter-spacing: .3em; text-transform: uppercase; color: var(--echo);
 }
 
 h1 {
-  margin: 0 0 16px;
-  font: 400 clamp(50px, 9.5vw, 92px)/.92 "Bebas Neue", Impact, sans-serif;
-  letter-spacing: .02em; color: var(--ink);
+  margin: 0 0 18px;
+  font: 700 clamp(48px, 8vw, 88px)/.98 "Cinzel", Georgia, serif;
+  letter-spacing: .01em; color: var(--bone);
+  text-shadow: 0 0 40px var(--echo-dim);
+}
+
+.masthead-sub {
+  margin: 0; max-width: 46ch;
+  font: 500 15px/1.5 "IBM Plex Mono", monospace;
+  color: var(--bone-dim); letter-spacing: .01em;
 }
 
 /* ---------- badges ---------- */
 
 .pill {
   display: inline-block;
-  font: 600 13px/1 "IBM Plex Mono", monospace; letter-spacing: .08em;
-  padding: 6px 10px; border-radius: 5px; color: #fff;
+  font: 700 13px/1 "IBM Plex Mono", monospace; letter-spacing: .08em;
+  padding: 6px 10px; border-radius: 5px; color: #04141a;
 }
-.pill-def   { background: var(--def); }
+.pill-def   { background: var(--ember); }
 .pill-mdef  { background: var(--mdef); }
 .pill-split { background: var(--split); }
 
 .cc {
   display: inline-block; font: 600 13px/1.3 "IBM Plex Mono", monospace;
-  padding: 5px 9px; border-radius: 4px; color: #fff;
+  padding: 5px 9px; border-radius: 4px; color: #04141a;
 }
 .cc-silence { background: var(--silence); }
 .cc-freeze  { background: var(--freeze); }
-.cc-stun    { background: var(--stun); }
-.cc-curse   { background: var(--curse); }
+.cc-stun    { background: var(--stun); color: #1a0400; }
+.cc-curse   { background: var(--curse); color: #1a0006; }
 
 /* ---------- keyline ---------- */
 
-.keyline { padding: 28px 20px 6px; }
+.keyline { padding: 34px 20px 8px; }
 .key {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  margin: 0; padding-bottom: 14px; border-bottom: 1px solid var(--line);
-  font: 500 13px/1 "IBM Plex Mono", monospace; color: var(--ink-3);
+  margin: 0; padding-bottom: 16px; border-bottom: 1px solid var(--mist);
+  font: 500 13px/1 "IBM Plex Mono", monospace; color: var(--bone-faint);
 }
 .key .pill { margin-left: 10px; }
 .key .pill:first-child { margin-left: 0; }
 .key .hint {
-  margin-left: auto; font-style: normal; color: var(--ink-3);
+  margin-left: auto; font-style: normal; color: var(--bone-faint);
   font: 400 12.5px/1.4 Inter, sans-serif;
 }
 
 /* ---------- the climb: one block per boss ---------- */
 
-.sheet { padding-block: 22px 64px; display: grid; gap: 8px; }
+.sheet { padding-block: 22px 72px; display: grid; gap: 10px; }
 
 .boss {
   /* min-width:0 because .boss is itself a grid item of .sheet: grid/flex
      items default to min-width:auto (content's min-content), which lets a
      wide nested box force this whole row past its own grid track. */
   min-width: 0;
-  border-radius: 11px;
-  background: var(--panel); border: 1px solid var(--line-soft);
-  border-left: 5px solid var(--line);
-  padding: 6px 8px;
+  border-radius: var(--radius);
+  background: var(--void-2); border: 1px solid var(--mist);
+  padding: 14px 16px;
   display: flex; align-items: center; gap: 18px;
-  transition: border-color .12s, box-shadow .12s;
+  transition: border-color .15s, box-shadow .15s, background .15s;
 }
-.boss[data-def="DEF"]   { border-left-color: var(--def); }
-.boss[data-def="MDEF"]  { border-left-color: var(--mdef); }
-.boss[data-def="SPLIT"] { border-left-color: var(--split); }
 
-/* first boss of a new floor gets a little air, so paired floors read together */
-.boss.is-newfloor { margin-top: 12px; }
+.boss.is-newfloor { margin-top: 14px; }
 .boss.is-newfloor:first-child { margin-top: 0; }
 
 .boss:has(.is-active) {
-  border-color: var(--ink-3);
-  box-shadow: 0 2px 5px rgba(30,25,15,.07), 0 8px 20px rgba(30,25,15,.09);
+  border-color: var(--mist-2); background: #151926;
+  box-shadow: 0 0 0 1px var(--mist-2), 0 10px 30px rgba(0,0,0,.35);
 }
 
-/* ---------- left zone: icon, floor tag, name ---------- */
+/* ---------- left zone: floor badge, icon, name ---------- */
 
 .b-id {
-  flex: none; width: 270px; min-width: 0;
-  display: flex; align-items: center; gap: 12px;
+  flex: none; width: 280px; min-width: 0;
+  display: flex; align-items: center; gap: 14px;
 }
 
-.f-tag {
-  flex: none; width: 46px;
-  font: 600 17px/1 "IBM Plex Mono", monospace; letter-spacing: .04em;
-  color: var(--ink);
+/* the signature element: a ringed "echo" token. Ring color = DEF/MDEF/SPLIT;
+   the glow brightens with --depth (0 at floor 5, 1 at floor 101), so the
+   token itself visualizes rising danger as you scroll down the tower. */
+.floor-badge {
+  --ring: var(--bone-faint);
+  flex: none; width: 52px; height: 52px; border-radius: 50%;
+  display: grid; place-items: center; position: relative;
+  background: var(--void-3);
+  border: 2px solid var(--ring);
+  box-shadow:
+    0 0 0 4px var(--void-2),
+    0 0 0 5px color-mix(in srgb, var(--ring) calc(30% + 40% * var(--depth, 0)), transparent),
+    0 0 calc(6px + 14px * var(--depth, 0)) color-mix(in srgb, var(--ring) calc(35% + 45% * var(--depth, 0)), transparent);
 }
+.floor-badge b {
+  font: 700 17px/1 "IBM Plex Mono", monospace; color: var(--bone);
+}
+.boss[data-def="DEF"]   .floor-badge { --ring: var(--ember); }
+.boss[data-def="MDEF"]  .floor-badge { --ring: var(--mdef); }
+.boss[data-def="SPLIT"] .floor-badge { --ring: var(--split); }
 
 .row-icon {
   flex: none; width: 54px; height: 54px; border-radius: 9px;
-  background: var(--bg-2); border: 1px solid var(--line-soft);
+  background: var(--void-3); border: 1px solid var(--mist);
   object-fit: contain; padding: 4px;
 }
 
 .icon-fallback {
   display: grid; place-items: center;
-  font: 700 15px/1 "IBM Plex Mono", monospace; color: var(--ink-3);
+  font: 700 15px/1 "IBM Plex Mono", monospace; color: var(--bone-faint);
   letter-spacing: .02em;
 }
 .b-name {
-  flex: 1; min-width: 0; font-size: 19px; font-weight: 700;
+  flex: 1; min-width: 0; font: 700 19px/1.25 Inter, sans-serif; color: var(--bone);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
@@ -191,27 +219,27 @@ h1 {
 
 .b-mid {
   flex: 1 1 auto; min-width: 0;
-  display: flex; flex-direction: column; gap: 8px;
+  display: flex; flex-direction: column; gap: 10px;
   padding-block: 2px;
-  border-left: 1px solid var(--line-soft); border-right: 1px solid var(--line-soft);
-  padding-inline: 16px;
+  border-left: 1px solid var(--mist); border-right: 1px solid var(--mist);
+  padding-inline: 18px;
 }
 
-.b-mid-top { display: flex; flex-direction: column; gap: 7px; }
+.b-mid-top { display: flex; flex-direction: column; gap: 8px; }
 
 .b-head-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.b-type { font: 600 13.5px/1 "IBM Plex Mono", monospace; color: var(--ink-2); }
+.b-type { font: 600 13.5px/1 "IBM Plex Mono", monospace; color: var(--bone-dim); }
 .b-lv {
   font: 500 14px/1 "IBM Plex Mono", monospace;
-  color: var(--ink-2); letter-spacing: .04em;
+  color: var(--bone-dim); letter-spacing: .04em;
 }
 
 /* status tags: always visible, big enough to read at a glance,
    each its own hover/tap target */
 .b-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.b-tags .none { font: 500 12.5px/1 "IBM Plex Mono", monospace; color: var(--ink-3); }
+.b-tags .none { font: 500 12.5px/1 "IBM Plex Mono", monospace; color: var(--bone-faint); }
 
-.b-mid-bottom { display: flex; flex-wrap: wrap; gap: 20px; }
+.b-mid-bottom { display: flex; flex-wrap: wrap; gap: 22px; }
 .b-mid-bottom .stat { flex: 1 1 200px; min-width: 160px; }
 .b-mid-bottom .stat:has(.skill-chips) { flex: 3 1 320px; }
 
@@ -225,23 +253,23 @@ h1 {
 .tag-hot {
   /* font-family only, NOT the "font" shorthand: that resets font-size too,
      and since .tag-hot and .cc/.tag share specificity, source order alone
-     would decide the winner - it clobbered .cc's 10.5px down the line and
-     was the actual cause of Stun/Freeze/etc rendering oversized. */
+     would decide the winner. */
   cursor: help; border: 0; font-family: inherit; -webkit-appearance: none;
-  transition: filter .1s, box-shadow .1s;
+  transition: filter .1s, box-shadow .1s, transform .1s;
 }
 .tag-hot:hover, .tag-hot.is-active {
-  filter: brightness(0.92);
-  box-shadow: 0 0 0 2px var(--panel), 0 0 0 3.5px var(--ink-3);
+  filter: brightness(1.15);
+  box-shadow: 0 0 0 2px var(--void-2), 0 0 0 3.5px var(--mist-2);
+  transform: translateY(-1px);
 }
-.tag-hot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tag-hot:focus-visible { outline: 2px solid var(--echo); outline-offset: 2px; }
 
 /* debuff/DoT tags (Blind, Bleed 10s, Water Exposure, ...) - same size as the
    colored CC tags above, just neutral-toned since they're not hard lockouts */
 .tag {
   font: 600 13px/1.3 "IBM Plex Mono", monospace;
   padding: 5px 9px; border-radius: 4px;
-  background: var(--bg-2); border: 1px solid var(--line-soft); color: var(--ink-2);
+  background: var(--void-3); border: 1px solid var(--mist); color: var(--bone-dim);
 }
 
 /* min-width:0 throughout: grid/flex items default to min-width:auto, which
@@ -254,8 +282,8 @@ h1 {
 .el-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .el-chip {
   display: inline-flex; align-items: center; gap: 5px;
-  font: 700 13px/1 "IBM Plex Mono", monospace; color: var(--ink);
-  background: var(--bg-2); border: 1px solid var(--line-soft);
+  font: 700 13px/1 "IBM Plex Mono", monospace; color: var(--bone);
+  background: var(--void-3); border: 1px solid var(--mist);
   padding: 5px 9px 5px 6px; border-radius: 4px;
 }
 .el-icon { display: block; width: 18px; height: 18px; object-fit: contain; }
@@ -265,18 +293,18 @@ h1 {
 .cstats { display: flex; flex-wrap: wrap; gap: 6px; }
 .cstat {
   display: inline-flex; align-items: baseline; gap: 5px;
-  font: 600 13px/1.3 "IBM Plex Mono", monospace; color: var(--ink);
-  background: var(--bg-2); border: 1px solid var(--line-soft);
+  font: 600 13px/1.3 "IBM Plex Mono", monospace; color: var(--bone);
+  background: var(--void-3); border: 1px solid var(--mist);
   padding: 5px 9px; border-radius: 4px;
 }
 .cstat b {
   font: 700 10.5px/1 "IBM Plex Mono", monospace; letter-spacing: .04em;
-  text-transform: uppercase; color: var(--ink-3);
+  text-transform: uppercase; color: var(--bone-faint);
 }
 
 .stat-label {
-  font: 700 11.5px/1 "IBM Plex Mono", monospace; letter-spacing: .08em;
-  text-transform: uppercase; color: var(--ink-3); flex: none;
+  font: 700 11.5px/1 "IBM Plex Mono", monospace; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--bone-faint); flex: none;
 }
 
 /* every skill the boss casts, each with its own element icon - the thing
@@ -288,20 +316,20 @@ h1 {
 
 .stat-prep-text {
   display: block; margin-top: 6px;
-  font: 700 14px/1.4 "IBM Plex Mono", monospace; color: var(--ink);
+  font: 700 14px/1.4 "IBM Plex Mono", monospace; color: var(--bone);
 }
 
 /* confirmed via the skill/effect's own page - not every "shield"-named
    skill reflects, so this only appears on the 4 bosses that actually do */
 .reflect-note {
   margin-top: 10px; padding: 8px 10px; border-radius: 8px;
-  background: #fdf3e2; border: 1px solid rgba(168,84,0,.35);
-  font: 600 13px/1.4 "IBM Plex Mono", monospace; color: var(--def);
+  background: rgba(255,138,82,.10); border: 1px solid rgba(255,138,82,.35);
+  font: 600 13px/1.4 "IBM Plex Mono", monospace; color: var(--ember);
 }
 
 .b-side-more {
-  margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line-soft);
-  font-size: 13px; color: var(--ink-3); font-style: italic;
+  margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--mist);
+  font-size: 13px; color: var(--bone-faint); font-style: italic;
 }
 
 /* ---------- tooltip: one purpose only now - what a single status tag does ---------- */
@@ -311,9 +339,9 @@ h1 {
   width: 270px; max-width: calc(100vw - 24px);
   max-height: calc(100vh - 24px); overflow-y: auto;
   padding: 12px 14px;
-  background: var(--panel); color: var(--ink);
-  border: 1px solid var(--line); border-radius: var(--radius);
-  box-shadow: 0 4px 10px rgba(30,25,15,.08), 0 18px 44px rgba(30,25,15,.18);
+  background: #10131c; color: var(--bone);
+  border: 1px solid var(--mist-2); border-radius: var(--radius);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 20px 50px rgba(0,0,0,.5);
   opacity: 0; visibility: hidden; transform: translateY(3px);
   transition: opacity .13s, transform .13s, visibility .13s;
   pointer-events: none;   /* enabled once shown, so a long one can be scrolled */
@@ -321,38 +349,39 @@ h1 {
 .tip.is-on { opacity: 1; visibility: visible; transform: none; pointer-events: auto; }
 
 .tip-mini h4 {
-  margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--ink);
+  margin: 0 0 6px; font-size: 15px; font-weight: 700; color: var(--bone);
 }
-.tip-mini p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+.tip-mini p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--bone-dim); }
 
 /* ---------- footer ---------- */
 
 .site-foot {
-  border-top: 1px solid var(--line-soft); padding: 28px 0 48px;
-  background: var(--bg-2); color: var(--ink-3); font-size: 13.5px;
+  border-top: 1px solid var(--mist); padding: 32px 0 56px;
+  background: var(--void); color: var(--bone-faint); font-size: 13.5px;
 }
 .site-foot p { margin: 0 0 6px; }
-.site-foot strong { color: var(--ink-2); }
+.site-foot strong { color: var(--bone-dim); }
 
 /* ---------- responsive ---------- */
 
 /* not enough room for three side-by-side zones - stack them instead */
 @media (max-width: 1100px) {
-  .boss { flex-direction: column; align-items: stretch; gap: 10px; padding: 10px; }
+  .boss { flex-direction: column; align-items: stretch; gap: 12px; padding: 14px; }
   .b-id { width: auto; }
   .b-mid {
     border-left: 0; border-right: 0; padding-inline: 0;
-    border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft);
-    padding-block: 10px;
+    border-top: 1px solid var(--mist); border-bottom: 1px solid var(--mist);
+    padding-block: 12px;
   }
   .b-side { width: auto; }
 }
 
 @media (max-width: 640px) {
-  .masthead { padding: 44px 0 30px; }
+  .masthead { padding: 56px 0 36px; }
   .key .hint { margin-left: 0; width: 100%; }
   .b-lv, .b-type { display: none; }   /* keep the name readable at this width; both are in Combat too */
-  .f-tag { width: 36px; font-size: 15px; }
+  .floor-badge { width: 42px; height: 42px; }
+  .floor-badge b { font-size: 14px; }
   .row-icon, .icon-fallback.row-icon { width: 44px; height: 44px; }
   .tip { width: calc(100vw - 24px); }
 }
