@@ -158,52 +158,60 @@
     f.bosses.push(b);
   });
 
-  // Three zones per boss row:
-  //   left:          icon, floor tag, name
+  // One card per FLOOR, not per boss: a floor with two bosses (F45, F101, ...)
+  // shares a single box with one floor badge, so scrolling past it never
+  // looks like two different floors - only the divider between boss entries
+  // says "same floor, another boss here."
+  //
+  // Inside each entry, three zones:
+  //   identity:      icon, name
   //   middle-top:    type, level, DEF/MDEF, combat stats, status tags
   //   middle-bottom: element, and every skill the boss casts (own element each)
   //   right:         Prepare - and where future notes/tips go
-  // A floor with two bosses repeats its number, so every block stands alone.
+  function bossEntryHTML(b) {
+    return '<div class="boss-entry" data-def="' + b.def + '">' +
+      '<div class="b-id">' +
+        iconHTML(b, "row-icon", 48) +
+        '<span class="b-name">' + esc(b.name) + "</span>" +
+      "</div>" +
+
+      '<div class="b-mid">' +
+        '<div class="b-mid-top">' +
+          '<div class="b-head-row">' +
+            '<span class="b-type">' + esc(b.combat.type) + "</span>" +
+            '<span class="b-lv">LV ' + b.level + "</span>" +
+            '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
+          "</div>" +
+          '<div class="cstats">' + combatChips(b.combat) + "</div>" +
+          '<div class="b-tags">' + ccTags(b) + "</div>" +
+        "</div>" +
+        '<div class="b-mid-bottom">' +
+          '<div class="stat"><span class="stat-label">Element</span>' +
+            '<div class="el-chips">' + elementChips(b.elements) + "</div></div>" +
+          '<div class="stat"><span class="stat-label">Skills</span>' +
+            '<div class="skill-chips">' + skillChips(b) + "</div></div>" +
+        "</div>" +
+      "</div>" +
+
+      '<div class="b-side">' +
+        '<span class="stat-label">Prepare</span>' +
+        '<span class="stat-prep-text">' + esc(b.prepare) + "</span>" +
+        (b.reflect ? '<div class="reflect-note">⚠ ' + esc(b.reflect) + "</div>" : "") +
+        '<div class="b-side-more">More notes and tips coming soon.</div>' +
+      "</div>" +
+    "</div>";
+  }
+
   $("#list").innerHTML = floors.map(function (f) {
-    return f.bosses.map(function (b, j) {
-      return '<div class="boss' + (j === 0 ? " is-newfloor" : "") + '" data-def="' + b.def + '"' +
-          (j === 0 ? ' id="floor-' + f.floor + '"' : "") + '>' +
+    var defs = f.bosses.map(function (b) { return b.def; });
+    var groupDef = defs.every(function (d) { return d === defs[0]; }) ? defs[0] : "SPLIT";
 
-        '<div class="b-id">' +
-          '<span class="floor-badge" style="--depth:' + ((f.floor - 5) / 96).toFixed(2) + '">' +
-            '<b>' + f.floor + "</b>" +
-          "</span>" +
-          iconHTML(b, "row-icon", 48) +
-          '<span class="b-name">' + esc(b.name) + "</span>" +
-        "</div>" +
-
-        '<div class="b-mid">' +
-          '<div class="b-mid-top">' +
-            '<div class="b-head-row">' +
-              '<span class="b-type">' + esc(b.combat.type) + "</span>" +
-              '<span class="b-lv">LV ' + b.level + "</span>" +
-              '<span class="pill pill-' + b.def.toLowerCase() + '">' + b.def + "</span>" +
-            "</div>" +
-            '<div class="cstats">' + combatChips(b.combat) + "</div>" +
-            '<div class="b-tags">' + ccTags(b) + "</div>" +
-          "</div>" +
-          '<div class="b-mid-bottom">' +
-            '<div class="stat"><span class="stat-label">Element</span>' +
-              '<div class="el-chips">' + elementChips(b.elements) + "</div></div>" +
-            '<div class="stat"><span class="stat-label">Skills</span>' +
-              '<div class="skill-chips">' + skillChips(b) + "</div></div>" +
-          "</div>" +
-        "</div>" +
-
-        '<div class="b-side">' +
-          '<span class="stat-label">Prepare</span>' +
-          '<span class="stat-prep-text">' + esc(b.prepare) + "</span>" +
-          (b.reflect ? '<div class="reflect-note">⚠ ' + esc(b.reflect) + "</div>" : "") +
-          '<div class="b-side-more">More notes and tips coming soon.</div>' +
-        "</div>" +
-
+    return '<div class="floor-group" id="floor-' + f.floor + '" data-def="' + groupDef + '">' +
+        '<span class="floor-badge" style="--depth:' + ((f.floor - 5) / 96).toFixed(2) + '">' +
+          '<b>' + f.floor + "</b>" +
+        "</span>" +
+        '<div class="floor-bosses">' + f.bosses.map(bossEntryHTML).join("") + "</div>" +
       "</div>";
-    }).join("");
   }).join("");
 
   /* meta blocks */

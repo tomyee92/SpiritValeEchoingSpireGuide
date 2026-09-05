@@ -4,9 +4,10 @@ A fan-made, floor-by-floor guide to the Echoing Spire (Eternal Tower) in **Spiri
 all 20 boss floors from 5 to 101.
 
 The existing community guides present the data as one flat filterable table. This version is
-organized the way you actually climb: **one line per boss, in climb order** — F5, then F10,
-then F15, straight down the tower. A floor with two bosses repeats its number so every line
-stands on its own.
+organized the way you actually climb: **one card per floor, in climb order** — F5, then F10,
+then F15, straight down the tower. A floor with two bosses (F35, F40, F45, F60, F85, F90, F95,
+and F101 with eight) shares a single card with one floor badge, separated by a dashed divider -
+not two separate boxes, which read as two different floors while scrolling.
 
 Every boss block is three zones, left to right:
 

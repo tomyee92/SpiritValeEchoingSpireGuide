@@ -147,12 +147,15 @@ h1 {
   font: 400 12.5px/1.4 Inter, sans-serif;
 }
 
-/* ---------- the climb: one block per boss ---------- */
+/* ---------- the climb: one box per FLOOR, not per boss ---------- */
 
 .sheet { padding-block: 22px 72px; display: grid; gap: 10px; }
 
-.boss {
-  /* min-width:0 because .boss is itself a grid item of .sheet: grid/flex
+/* the card: everything on one floor (one boss, or two) shares this single
+   box, so a two-boss floor never reads as two different floors while
+   scrolling - only the divider inside says "same floor, another boss." */
+.floor-group {
+  /* min-width:0 because this is itself a grid item of .sheet: grid/flex
      items default to min-width:auto (content's min-content), which lets a
      wide nested box force this whole row past its own grid track. */
   min-width: 0;
@@ -163,28 +166,19 @@ h1 {
   transition: border-color .15s, box-shadow .15s;
 }
 
-.boss.is-newfloor { margin-top: 14px; }
-.boss.is-newfloor:first-child { margin-top: 0; }
-
-.boss:has(.is-active) {
+.floor-group:has(.is-active) {
   border-color: var(--line-2);
   box-shadow: 0 2px 6px rgba(30,25,15,.08), 0 12px 28px rgba(30,25,15,.12);
 }
 
-/* ---------- left zone: floor badge, icon, name ---------- */
-
-.b-id {
-  flex: none; width: 280px; min-width: 0;
-  display: flex; align-items: center; gap: 14px;
-}
-
-/* the signature element: a ringed "echo" token. Ring color = DEF/MDEF/SPLIT;
-   the halo intensifies with --depth (0 at floor 5, 1 at floor 101), so the
-   token itself visualizes rising danger as you scroll down the tower. */
+/* the signature element: a ringed "echo" token, one per floor regardless of
+   how many bosses share it. Ring color = DEF/MDEF/SPLIT (mixed when a
+   floor's bosses don't agree); the halo intensifies with --depth (0 at
+   floor 5, 1 at floor 101), visualizing rising danger as you climb. */
 .floor-badge {
   --ring: var(--ink-faint);
   flex: none; width: 52px; height: 52px; border-radius: 50%;
-  display: grid; place-items: center; position: relative;
+  display: grid; place-items: center; position: relative; align-self: center;
   background: var(--bg-3);
   border: 2px solid var(--ring);
   box-shadow:
@@ -195,9 +189,27 @@ h1 {
 .floor-badge b {
   font: 700 17px/1 "IBM Plex Mono", monospace; color: var(--ink);
 }
-.boss[data-def="DEF"]   .floor-badge { --ring: var(--ember); }
-.boss[data-def="MDEF"]  .floor-badge { --ring: var(--mdef); }
-.boss[data-def="SPLIT"] .floor-badge { --ring: var(--split); }
+.floor-group[data-def="DEF"]   .floor-badge { --ring: var(--ember); }
+.floor-group[data-def="MDEF"]  .floor-badge { --ring: var(--mdef); }
+.floor-group[data-def="SPLIT"] .floor-badge { --ring: var(--split); }
+
+/* every boss on this floor, stacked; a divider marks a second boss on the
+   same floor without repeating the card chrome or the floor number */
+.floor-bosses { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.boss-entry {
+  min-width: 0;
+  display: flex; align-items: center; gap: 18px;
+}
+.boss-entry + .boss-entry {
+  margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--line);
+}
+
+/* ---------- left zone: icon, name ---------- */
+
+.b-id {
+  flex: none; width: 220px; min-width: 0;
+  display: flex; align-items: center; gap: 14px;
+}
 
 .row-icon {
   flex: none; width: 54px; height: 54px; border-radius: 9px;
@@ -366,7 +378,9 @@ h1 {
 
 /* not enough room for three side-by-side zones - stack them instead */
 @media (max-width: 1100px) {
-  .boss { flex-direction: column; align-items: stretch; gap: 12px; padding: 14px; }
+  .floor-group { flex-direction: column; align-items: stretch; gap: 12px; padding: 14px; }
+  .floor-badge { align-self: flex-start; }
+  .boss-entry { flex-direction: column; align-items: stretch; gap: 12px; }
   .b-id { width: auto; }
   .b-mid {
     border-left: 0; border-right: 0; padding-inline: 0;
